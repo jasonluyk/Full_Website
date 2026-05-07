@@ -1,0 +1,26 @@
+# Environment files - NEVER commit these
+myWebsite/api/.env
+New_WGI/backend/.env
+.env
+
+# Python
+New_WGI/venv/
+New_WGI/__pycache__/
+New_WGI/backend/__pycache__/
+*.pyc
+*.pyo
+
+# Node
+myWebsite/api/node_modules/
+node_modules/
+
+# Vite build output (built on server)
+New_WGI/frontend/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
