@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Jason Luyk</title>
+    <meta name="description" content="Get in touch with Jason Luyk">
+    <link rel="icon" href="codingicon.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #0891b2;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --gray: #64748b;
+            --light: #f1f5f9;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--light);
+            padding-top: 70px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--white);
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+
+        /* Contact Section */
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .contact-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .contact-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .contact-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .contact-card a, .contact-card button {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.75rem 2rem;
+            background: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .contact-card a:hover, .contact-card button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Projects Section */
+        .current-projects {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .current-projects h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .project-list {
+            list-style: none;
+        }
+
+        .project-list li {
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.5rem;
+            background: var(--light);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .project-list li:hover {
+            transform: translateX(5px);
+            background: #e0e7ff;
+        }
+
+        .project-name {
+            flex: 1;
+        }
+
+        .project-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 1rem;
+        }
+
+        .status-ongoing {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-awaiting {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-developmental {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .status-early {
+            background: #f3e8ff;
+            color: #6b21a8;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* Learning Section */
+        .learning-section {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .learning-section h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .learning-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .learning-item {
+            padding: 1.5rem;
+            background: var(--light);
+            border-radius: 8px;
+            border-top: 4px solid var(--secondary);
+        }
+
+        .learning-item h3 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .learning-item a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .learning-item a:hover {
+            text-decoration: underline;
+        }
+
+        /* Suggestions Section */
+        .suggestions-section {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .suggestions-section h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .suggestions-section p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .suggestion-btn {
+            padding: 0.875rem 2.5rem;
+            background: var(--secondary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .suggestion-btn:hover {
+            background: #0e7490;
+            transform: translateY(-2px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 2rem;
+            position: relative;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .project-detail {
+            line-height: 1.8;
+        }
+
+        .project-detail h3 {
+            color: var(--primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-detail p {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .project-detail ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-detail li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Form Styles */
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 0.875rem;
+            border: 2px solid var(--light);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            padding: 1rem 2rem;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .success-message {
+            display: none;
+            padding: 1rem;
+            background: #10b981;
+            color: var(--white);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                flex-direction: column;
+                background: var(--white);
+                width: 100%;
+                padding: 2rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                transition: right 0.3s ease;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .learning-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .project-list li {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .project-status {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">Jason Luyk</a>
+            <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="myprojects.html">Projects</a></li>
+                <li><a href="goals.html" class="active">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>Let's Connect</h1>
+        <p>Find me on these platforms or get in touch</p>
+    </div>
+
+    <div class="contact-container">
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-icon">💼</div>
+                <h3>LinkedIn</h3>
+                <p>Connect with me professionally</p>
+                <a href="https://www.linkedin.com/in/jason-luyk-158759139/" target="_blank" rel="noopener">View Profile</a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">💻</div>
+                <h3>GitHub</h3>
+                <p>Check out my code repositories</p>
+                <a href="https://github.com/jasonluyk" target="_blank" rel="noopener">View GitHub</a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">✉️</div>
+                <h3>Email Me</h3>
+                <p>Have a question or want to work together?</p>
+                <button onclick="openModal('emailModal')">Send Message</button>
+            </div>
+        </div>
+
+        <div class="current-projects">
+            <h2>🚀 Current Projects</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--gray);">Click on any project to learn more</p>
+            <ul class="project-list">
+                <li onclick="openProjectModal('wgiAnalytics')">
+                    <span class="project-name">WGI Analytics — Real-time color guard scoring platform</span>
+                    <span class="project-status status-completed" style="background:#d1fae5;color:#065f46;">Live ✓</span>
+                </li>
+                <li onclick="openProjectModal('website')">
+                    <span class="project-name">This Website — Portfolio and showcase</span>
+                    <span class="project-status status-ongoing">Ongoing</span>
+                </li>
+                <li onclick="openProjectModal('androidAuto')">
+                    <span class="project-name">Android Auto Dongle</span>
+                    <span class="project-status status-completed">Completed</span>
+                </li>
+                <li onclick="openProjectModal('HandheldNetworkAnalyzer')">
+                    <span class="project-name">ESP32 CYD Network Analyzer</span>
+                    <span class="project-status status-developmental">Developmental</span>
+                </li>
+                <li onclick="openProjectModal('softball')">
+                    <span class="project-name">Softball Game using Unity 6 Engine</span>
+                    <span class="project-status status-early">Early Stages</span>
+                </li>
+                <li onclick="openProjectModal('waterTank')">
+                    <span class="project-name">Water Tank Monitor with Web Interface</span>
+                    <span class="project-status status-completed">Completed</span>
+                </li>
+                <li onclick="openProjectModal('calendar')">
+                    <span class="project-name">Raspberry Pi Hosted Calendar</span>
+                    <span class="project-status status-completed">Completed</span>
+                </li>
+                <li onclick="openProjectModal('printServer')">
+                    <span class="project-name">Raspberry Pi Print Server - Windows 98</span>
+                    <span class="project-status status-completed">Completed</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="learning-section">
+            <h2>📚 Continuous Learning</h2>
+            <p style="margin-bottom: 1rem; color: var(--gray);">Platforms I'm currently using to expand my skills</p>
+            <div class="learning-grid">
+                <div class="learning-item">
+                    <h3>Full-Stack Development</h3>
+                    <p>Learning on StackSkills and Eduonix</p>
+                </div>
+
+                <div class="learning-item">
+                    <h3>Python Programming</h3>
+                    <p>Learning on BootDev, Zenva Academy, and StackSkills</p>
+                </div>
+
+                <div class="learning-item">
+                    <h3>Cybersecurity</h3>
+                    <p>Courses on Coursera and StackSkills</p>
+                </div>
+
+                <div class="learning-item">
+                    <h3>Game & Web Development</h3>
+                    <p>Learning on Zenva Academy, StackSkills, and Eduonix</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="suggestions-section">
+            <h2>💡 Open to Suggestions</h2>
+            <p>Have ideas for improvements or features? I'd love to hear them!</p>
+            <button class="suggestion-btn" onclick="openModal('suggestionModal')">Share Your Ideas</button>
+        </div>
+    </div>
+
+    <!-- Project Detail Modals -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal('projectModal')">&times;</button>
+                <h2 id="projectTitle"></h2>
+            </div>
+            <div class="modal-body">
+                <div id="projectDescription" class="project-detail"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Modal -->
+    <div id="emailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal('emailModal')">&times;</button>
+                <h2>✉️ Send Me a Message</h2>
+            </div>
+            <div class="modal-body">
+                <div id="emailSuccess" class="success-message">Message sent successfully!</div>
+                <form class="contact-form" id="emailForm" onsubmit="handleEmailSubmit(event)">
+                    <div class="form-group">
+                        <label for="emailName">Your Name</label>
+                        <input type="text" id="emailName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailAddress">Your Email</label>
+                        <input type="email" id="emailAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailSubject">Subject</label>
+                        <input type="text" id="emailSubject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailMessage">Message</label>
+                        <textarea id="emailMessage" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Suggestion Modal -->
+    <div id="suggestionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal('suggestionModal')">&times;</button>
+                <h2>💡 Share Your Suggestions</h2>
+            </div>
+            <div class="modal-body">
+                <div id="suggestionSuccess" class="success-message">Suggestion submitted successfully!</div>
+                <form class="contact-form" id="suggestionForm" onsubmit="handleSuggestionSubmit(event)">
+                    <div class="form-group">
+                        <label for="suggestionName">Your Name (Optional)</label>
+                        <input type="text" id="suggestionName">
+                    </div>
+                    <div class="form-group">
+                        <label for="suggestionEmail">Your Email (Optional)</label>
+                        <input type="email" id="suggestionEmail">
+                    </div>
+                    <div class="form-group">
+                        <label for="suggestionCategory">Category</label>
+                        <input type="text" id="suggestionCategory" placeholder="e.g., Feature Request, Bug Report, Design" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="suggestionText">Your Suggestion</label>
+                        <textarea id="suggestionText" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Submit Suggestion</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Project descriptions
+        const projects = {
+            wgiAnalytics: {
+                title: "WGI Analytics",
+                description: `
+                    <h3>Overview</h3>
+                    <p>A full-stack real-time analytics platform for WGI Color Guard competitions. Tracks live scores, season standings, projections, and World Championships across multiple venues.</p>
+
+                    <h3>Technologies Used</h3>
+                    <ul>
+                        <li>Python / FastAPI backend</li>
+                        <li>React / Vite frontend</li>
+                        <li>MongoDB Atlas database</li>
+                        <li>Playwright for web scraping</li>
+                        <li>DigitalOcean Droplet hosting</li>
+                    </ul>
+
+                    <h3>Features</h3>
+                    <ul>
+                        <li>Live score tracking with auto-refresh</li>
+                        <li>Season standings ranked by performance</li>
+                        <li>Future show projections using season data</li>
+                        <li>World Championships multi-venue tracker</li>
+                        <li>Past events archive with full results</li>
+                        <li>Plus (+) event pod advancement logic</li>
+                    </ul>
+
+                    <h3>Status</h3>
+                    <p>Live — actively used during the WGI season (January–April). Currently in offseason development adding DCI and softball tracking.</p>
+                `
+            },
+            website: {
+                title: "Portfolio Website",
+                description: `
+                    <h3>Overview</h3>
+                    <p>A modern, responsive portfolio website built to showcase my projects, skills, and experience. The site features interactive games, contact forms, and an admin dashboard for managing feedback.</p>
+                    
+                    <h3>Technologies Used</h3>
+                    <ul>
+                        <li>HTML5, CSS3, JavaScript</li>
+                        <li>Node.js/Express backend</li>
+                        <li>MongoDB database</li>
+                        <li>Digital Ocean App Platform hosting</li>
+                        <li>Phaser.js for game development</li>
+                    </ul>
+                    
+                    <h3>Features</h3>
+                    <ul>
+                        <li>Responsive design that works on all devices</li>
+                        <li>Interactive mini-games (slot machine, rock-paper-scissors, etc.)</li>
+                        <li>Contact form with email integration</li>
+                        <li>Suggestion submission system</li>
+                        <li>Protected admin dashboard</li>
+                    </ul>
+                    
+                    <h3>Status</h3>
+                    <p>Ongoing - Continuously adding new features and improvements based on feedback.</p>
+                `
+            },
+            androidAuto: {
+                title: "Android Auto Dongle",
+                description: `
+                    <h3>Overview</h3>
+                    <p>Building a custom Android Auto dongle to enable wireless Android Auto in vehicles that only support wired connections.</p>
+                    
+                    <h3>Goals</h3>
+                    <ul>
+                        <li>Create a cost-effective alternative to commercial solutions</li>
+                        <li>Learn about Bluetooth and WiFi Direct protocols</li>
+                        <li>Implement seamless connection switching</li>
+                    </ul>
+                    
+                    <h3>Technologies</h3>
+                    <ul>
+                        <li>Raspberry Pi Zero W or similar SBC</li>
+                        <li>Custom PCB design</li>
+                        <li>Linux-based software stack</li>
+                    </ul>
+                    
+                    <h3>Status</h3>
+                    <p>Completed - The project is finished and fully functional.</p>
+                `
+            },
+            HandheldNetworkAnalyzer: {
+                title: "ESP32 CYD Network Analyzer",
+                description: `
+                    <h3>Overview</h3>
+                    <p>Developing a small-scale touch screen that scans WiFi Networks.</p>
+                    
+                    <h3>Applications</h3>
+                    <ul>
+                        <li>Network Monitoring</li>
+                        <li>Network Health</li>
+                        <li>Other Cybersecurity features in the future</li>
+                        
+                    </ul>
+                    
+                    <h3>Technical Approach</h3>
+                    <ul>
+                        <li>ESP-32 CYD(Cheap Yellow Display)</li>
+                        <li>Cybersecurity basics</li>
+                        <li>Web-based visualization interface(Future Plans)</li>
+                        
+                    </ul>
+                    
+                    <h3>Status</h3>
+                    <p>Developmental Stages - Currently building the UI for the WiFi scanning.</p>
+                `
+            },
+            softball: {
+                title: "Softball Game - Unity 6",
+                description: `
+                    <h3>Overview</h3>
+                    <p>Creating a realistic softball simulation game using Unity 6 Engine. The game will feature realistic physics, multiple game modes, and team management.</p>
+                    
+                    <h3>Planned Features</h3>
+                    <ul>
+                        <li>Realistic ball physics and player movements</li>
+                        <li>Career mode with team management</li>
+                        <li>Multiple difficulty levels</li>
+                        <li>Local and online multiplayer</li>
+                        <li>Customizable teams and players</li>
+                    </ul>
+                    
+                    <h3>Learning Goals</h3>
+                    <ul>
+                        <li>Master Unity 6's new features</li>
+                        <li>Implement complex physics simulations</li>
+                        <li>Create engaging gameplay mechanics</li>
+                        <li>Develop AI for computer opponents</li>
+                    </ul>
+                    
+                    <h3>Status</h3>
+                    <p>Early Stages - Basic game mechanics and physics are being prototyped. Player models and animations are in development.</p>
+                `
+            },
+            waterTank: {
+                title: "Water Tank Monitor",
+                description: `
+                    <h3>Overview</h3>
+                    <p>A complete IoT solution for monitoring water tank levels with real-time data accessible through a web interface.</p>
+                    
+                    <h3>Features</h3>
+                    <ul>
+                        <li>Intank resistive sensors for level measurement</li>
+                        <li>ESP32 Cheap Yellow Display microcontroller</li>
+                        <li>Arduino Pro Micro for sensor interfacing</li>
+                        <li>Web dashboard with real-time updates</li>
+                        <li>Historical data logging and visualization</li>
+                        <li>Mobile-responsive interface</li>
+                        <li>Bluetooth connectivity for local access</li>
+                    </ul>
+                    
+                    <h3>Implementation</h3>
+                    <ul>
+                        <li>Uses installed tank sensors</li>
+                        <li>WiFi connectivity for remote monitoring</li>
+                        <li>Currently using local server</li>
+                    </ul>
+                    
+                    <h3>Status</h3>
+                    <p>Completed - System is installed and functioning reliably. System is currently running on a Catamaran in the Bahamas.</p>
+                `
+            },
+            calendar: {
+                title: "Raspberry Pi Hosted Calendar",
+                description: `
+                    <h3>Overview</h3>
+                    <p>A self-hosted calendar server running on a Raspberry Pi, providing a private alternative to cloud-based calendar services with full control over your data.</p>
+                    
+                    <h3>Features</h3>
+                    <ul>
+                        <li>CalDAV/CardDAV server for calendar and contacts</li>
+                        <li>Web interface for easy access</li>
+                        <li>Synchronization with multiple devices</li>
+                        <li>Shared calendars for family members</li>
+                        <li>PDF Upload capabilities for cookbooks</li>
+                        <li>Automated backups</li>
+                    </ul>
+                    
+                    <h3>Technology Stack</h3>
+                    <ul>
+                        <li>Raspberry Pi 4</li>
+                        <li>Nextcloud or Radicale</li>
+                        <li>Nginx reverse proxy</li>
+                        <li>Let's Encrypt SSL certificates</li>
+                    </ul>
+                    
+                    <h3>Status</h3>
+                    <p>Completed - Running on Pi5 with 21 inch touchscreen display.</p>
+                    `
+                },
+                printServer: {
+                title: "Raspberry Pi Print Server - Windows 98",
+                description: `
+                    <h3>Overview</h3>
+                    <p>A Raspberry Pi-based print server that enables modern network printing capabilities for legacy Windows 98 systems, breathing new life into vintage computers.</p>
+                    
+                    <h3>Features</h3>
+                    <ul>
+                        <li>CUPS-based print server</li>
+                        <li>SMB/CIFS file sharing for Windows 98 compatibility</li>
+                        <li>Support for modern USB printers</li>
+                        <li>Network printing without dedicated print server hardware</li>
+                        <li>Low power consumption (5W average)</li>
+                    </ul>
+                    
+                    <h3>Technical Details</h3>
+                    <ul>
+                        <li>Raspberry Pi 3B+ running Raspberry Pi OS</li>
+                        <li>Samba configured for Windows 98 networking</li>
+                        <li>Custom printer drivers for legacy compatibility</li>
+                        <li>Web interface for printer management</li>
+                    </ul>
+                    
+                    <h3>Status</h3>
+                    <p>Completed - Successfully prints from Windows 98 machines to modern USB printers. System is stable and requires minimal maintenance.</p>
+                    <p>BSI Patent Pending - Raspberry Pi Print Server for Legacy Systems.</p>
+                `
+            }
+            };
+
+             function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('navLinks').classList.remove('active');
+            });
+        });
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            // Reset forms and hide success messages
+            if (id === 'emailModal') {
+                document.getElementById('emailForm').reset();
+                document.getElementById('emailSuccess').classList.remove('show');
+            } else if (id === 'suggestionModal') {
+                document.getElementById('suggestionForm').reset();
+                document.getElementById('suggestionSuccess').classList.remove('show');
+            }
+        }
+
+        function openProjectModal(projectKey) {
+            const project = projects[projectKey];
+            document.getElementById('projectTitle').textContent = project.title;
+            document.getElementById('projectDescription').innerHTML = project.description;
+            openModal('projectModal');
+        }
+
+        // ESC key closes modal
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(m => closeModal(m.id));
+            }
+        });
+
+        // Close modal on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+
+        async function handleEmailSubmit(event) {
+            event.preventDefault();
+            
+            const submitBtn = event.target.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            
+            const name = document.getElementById('emailName').value;
+            const email = document.getElementById('emailAddress').value;
+            const subject = document.getElementById('emailSubject').value;
+            const message = document.getElementById('emailMessage').value;
+            
+            try {
+                const response = await fetch('/site-api/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, subject, message })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('emailSuccess').classList.add('show');
+                    document.getElementById('emailForm').reset();
+                    
+                    setTimeout(() => {
+                        closeModal('emailModal');
+                    }, 2000);
+                } else {
+                    alert('Failed to send message: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to send message. Please try again or email directly.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Message';
+            }
+        }
+
+        async function handleSuggestionSubmit(event) {
+            event.preventDefault();
+            
+            const submitBtn = event.target.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            const name = document.getElementById('suggestionName').value;
+            const email = document.getElementById('suggestionEmail').value;
+            const category = document.getElementById('suggestionCategory').value;
+            const suggestion = document.getElementById('suggestionText').value;
+            
+            try {
+                const response = await fetch('/site-api/submit-suggestion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, category, suggestion })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('suggestionSuccess').classList.add('show');
+                    document.getElementById('suggestionForm').reset();
+                    
+                    setTimeout(() => {
+                        closeModal('suggestionModal');
+                    }, 2000);
+                } else {
+                    alert('Failed to submit suggestion: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to submit suggestion. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Suggestion';
+            }
+        }
+    </script>
+</body>
+</html>

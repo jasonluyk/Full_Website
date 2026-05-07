@@ -1,0 +1,277 @@
+body {
+    background-color: white;
+    color: black;
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: auto;
+    margin: auto;
+    
+}
+
+
+
+.main {
+    display: flex;
+    padding: 20px;
+    gap: 40px;
+    justify-content: center;
+    text-align: center;
+}
+
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 800px;
+    max-width: 90%;
+    display:grid;
+    
+}
+
+img {
+    width: 150px;
+    height: 150px;
+    cursor: pointer;
+}
+
+input {
+    width: auto;
+    padding: 12px;
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+button {
+    width: auto;
+    padding: 5px;
+    font-weight: bold;
+    background-color: blue;
+    border: 2px solid blue;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: white;
+    color: blue;
+}
+
+.nav {
+    background-color: cadetblue;
+    color: white;
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+}
+
+.nav ul{
+    padding: 0px;
+    margin: 0px;
+    list-style-type: none;
+    font-size: 0px;
+}
+
+.nav ul li {
+    padding: 16px;
+    text-align: center;
+    font-size: 1.2rem;
+    border-bottom: 1px solid black;
+    transition-property: .2s;
+    color: white;
+}
+
+.nav ul li:hover {
+    background-color: black;
+    color: blue;
+}
+
+.image-area {
+    background-image: url("images/coding_background.png");
+    background-color: black;
+    background-position: center center;
+    background-size: cover;
+    padding-top: 200px;
+    padding-bottom: 200px;
+    
+}
+
+/* .centered-container {
+    max-width: 1020px;
+    margin: 0px auto;
+    padding: 0px 16px;
+}*/
+
+.image-text {
+    text-align: center;
+    background-color: black;
+    color: white;
+    font-size: 2.5rem;
+}
+
+.intro-text {
+    color: gray;
+    font-size: 1.5rem;
+    text-align: center;
+    padding-top: 50px;
+    padding-bottom: 50px;
+
+}
+
+.single-service {
+    text-align: center;
+    margin-bottom: 32px;
+    margin-top: 32px;
+}
+
+.single-service p {
+    padding: 0px 16px;
+}
+
+h2 {
+    text-align: center;
+}
+
+h3, h5 {
+	text-align: center;
+	margin-left: 10%;
+    margin-bottom: 20px;
+}
+
+#commentSection {
+	display: flex;
+	flex-direction: row;
+    align-items: flex-start;
+    padding-left: 12%;
+} 
+
+.comment {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;    
+    margin-top: 5px;
+    margin-bottom: 5px;
+   }
+
+.avatar {
+    border: 1px solid gray;
+    border-radius: 10px;
+    line-height: 25px;
+    font-size: 12px;
+    height: auto;
+    width: 100%;
+
+}
+   
+.text {
+    line-height: 25px;
+    padding-left: 10px;
+    font-size: 12px;
+}
+   
+#initials {
+    width: 60px;
+    font-size: 16px;
+}
+   
+input {
+    
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: white;
+}
+
+h1 {
+    color: blue;
+    text-align: center;
+    font-family: Century Gothic;
+    
+    height: 50px;
+}
+
+p {
+    text-align: center;
+    vertical-align: middle;
+    justify-content: center;
+    
+}
+
+.answer {
+    font-family: Century Gothic;
+    font-size: 20px;
+    color: red;
+    text-align: center;
+    
+}
+
+@media screen and (min-width: 700px) {
+    .nav ul {
+        text-align: right;
+    }
+    .nav ul li {
+        display: inline-block;
+        border-bottom: 0px;
+        border-left: 1px solid black;
+        text-align: left;
+    }
+    .single-service {
+        display: inline-flexbox;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%; 
+
+    }
+
+    #hiddenDiv, #hiddenDiv2, #hiddenDiv3, #hiddenDiv4, #hiddenDiv5{
+        display: none;
+    }
+    #slotMachine {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100px; /* Adjust height as needed */
+    }
+    
+    #buttons {
+        display: grid;
+        
+        justify-content: center;
+    }
+    .slot {
+        width: 40px; /* Adjust width as needed */
+        height: 80px; /* Adjust height as needed */
+        margin: 0 5px;
+        font-size: 24px;
+        text-align: center;
+        background-color: #f0f0f0; /* Slot background color */
+        border: 1px solid #ccc; /* Slot border */
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Slot box shadow */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff; /* Button background color */
+        color: #fff; /* Button text color */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    button:hover {
+        background-color: #0056b3; /* Button background color on hover */
+    }
+
+ 
+    
+    
+}

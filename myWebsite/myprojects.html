@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - Jason Luyk</title>
+    <meta name="description" content="Projects, tools, and interactive demos by Jason Luyk — Electronics Engineer & Software Developer">
+    <link rel="icon" href="codingicon.ico">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #0891b2;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --gray: #64748b;
+            --light: #f1f5f9;
+            --white: #ffffff;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--light);
+            padding-top: 70px;
+        }
+
+        /* ── Navigation ── */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active { color: var(--primary); }
+        .nav-links a.active::after { width: 100%; }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+
+        /* ── Page Header ── */
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--white);
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+        }
+
+        .page-header h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.75rem; }
+        .page-header p { font-size: 1.15rem; opacity: 0.9; }
+
+        /* ── Sections ── */
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-label h2 {
+            font-size: 1.8rem;
+            color: var(--dark);
+        }
+
+        .section-label span {
+            font-size: 1.6rem;
+        }
+
+        .section-divider {
+            border: none;
+            border-top: 2px solid var(--light);
+            margin: 0;
+        }
+
+        /* ── Featured Projects Grid ── */
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+        }
+
+        .featured-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .featured-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 32px rgba(0,0,0,0.12);
+        }
+
+        .featured-card-header {
+            padding: 2rem;
+            position: relative;
+        }
+
+        .featured-card-header.wgi {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e8b84b;
+        }
+
+        .featured-card-header.hardware {
+            background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+            color: #6ee7b7;
+        }
+
+        .featured-card-header.python {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+            color: #93c5fd;
+        }
+
+        .featured-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+        .featured-card-header h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .featured-card-header p {
+            font-size: 0.85rem;
+            opacity: 0.75;
+            text-align: left;
+        }
+
+        .live-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #10b981;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            padding: 3px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .featured-card-body {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .featured-card-body p {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            flex: 1;
+            text-align: left;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tech-tag {
+            background: var(--light);
+            color: var(--gray);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .featured-btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .featured-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .featured-btn.disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ── Demo Projects Grid ── */
+        .demos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .demo-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+
+        .demo-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .demo-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .demo-header h3 { font-size: 1.2rem; }
+
+        .demo-body { padding: 1.25rem; }
+
+        .demo-body p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .demo-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .demo-btn:hover { background: var(--primary-dark); }
+
+        /* ── Modals ── */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 2000;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 16px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.25s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 1.5rem 2rem;
+            position: relative;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-header h2 { font-size: 1.5rem; }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: var(--white);
+            font-size: 1.4rem;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover { background: rgba(255,255,255,0.35); }
+
+        .modal-body { padding: 2rem; }
+
+        /* ── Game Elements ── */
+        .game-box {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .game-box p { color: var(--gray); margin-bottom: 1rem; text-align: center; }
+
+        input[type="number"], select {
+            width: 100%;
+            max-width: 280px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            margin: 0.4rem 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+            background: var(--white);
+            color: var(--dark);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .game-btn {
+            padding: 0.75rem 2rem;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .game-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .feedback-text {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            min-height: 1.5rem;
+        }
+
+        .slot-machine {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .slot {
+            width: 80px;
+            height: 100px;
+            background: var(--white);
+            border: 3px solid var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.15);
+        }
+
+        .game-images {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .game-images img {
+            width: 110px;
+            height: 110px;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            background: var(--white);
+        }
+
+        .game-images img:hover {
+            transform: scale(1.1) translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 8px 16px rgba(37,99,235,0.2);
+        }
+
+        #phaserGame {
+            margin: 1rem auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-width: 100%;
+        }
+
+        /* ── Footer ── */
+        footer {
+            background: var(--dark);
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        footer p { opacity: 0.7; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: block; }
+
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                flex-direction: column;
+                background: var(--white);
+                width: 100%;
+                padding: 2rem;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                transition: right 0.3s ease;
+            }
+
+            .nav-links.active { right: 0; }
+            .featured-grid { grid-template-columns: 1fr; }
+            .demos-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">Jason Luyk</a>
+            <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="myprojects.html" class="active">Projects</a></li>
+                <li><a href="goals.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>My Projects</h1>
+        <p>Real-world applications, tools, and interactive demos</p>
+    </div>
+
+    <!-- ── Featured Projects ── -->
+    <div class="section">
+        <div class="section-label">
+            <span>🚀</span>
+            <h2>Featured Projects</h2>
+        </div>
+
+        <div class="featured-grid">
+
+            <!-- WGI Analytics -->
+            <div class="featured-card">
+                <div class="featured-card-header wgi">
+                    <span class="live-badge">Live</span>
+                    <div class="featured-icon">📊</div>
+                    <h3>WGI Analytics</h3>
+                    <p>Full-stack marching arts analytics platform</p>
+                </div>
+                <div class="featured-card-body">
+                    <p>
+                        A real-time scoring and analytics platform for WGI Color Guard competitions.
+                        Features live score tracking, season standings, projections, historical data,
+                        and World Championships tracking across multiple venues.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">FastAPI</span>
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">MongoDB</span>
+                        <span class="tech-tag">Playwright</span>
+                        <span class="tech-tag">DigitalOcean</span>
+                    </div>
+                    <a href="/wgi" class="featured-btn">View Live App →</a>
+                </div>
+            </div>
+
+            <!-- Water Monitoring System -->
+            <div class="featured-card">
+                <div class="featured-card-header hardware">
+                    <div class="featured-icon">💧</div>
+                    <h3>Water Monitoring System</h3>
+                    <p>IoT hardware + web interface</p>
+                </div>
+                <div class="featured-card-body">
+                    <p>
+                        An IoT water monitoring system built with Raspberry Pi. Collects sensor data,
+                        displays real-time readings through a web interface, and sends alerts when
+                        thresholds are exceeded.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Raspberry Pi</span>
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Hardware</span>
+                        <span class="tech-tag">Sensors</span>
+                        <span class="tech-tag">Web Interface</span>
+                    </div>
+                    <button class="featured-btn disabled" disabled>In Development</button>
+                </div>
+            </div>
+
+            <!-- Personal Website -->
+            <div class="featured-card">
+                <div class="featured-card-header python">
+                    <div class="featured-icon">🌐</div>
+                    <h3>This Website</h3>
+                    <p>Full-stack personal portfolio</p>
+                </div>
+                <div class="featured-card-body">
+                    <p>
+                        A full-stack personal portfolio and contact platform. Built with vanilla HTML/CSS/JS
+                        on the frontend and Node.js/Express on the backend, with MongoDB for data storage
+                        and Nodemailer for contact form emails.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HTML/CSS/JS</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">Express</span>
+                        <span class="tech-tag">MongoDB</span>
+                        <span class="tech-tag">DigitalOcean</span>
+                    </div>
+                    <button class="featured-btn disabled" disabled>You're Here!</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ── Interactive Demos ── -->
+    <div class="section">
+        <div class="section-label">
+            <span>🎮</span>
+            <h2>Interactive Demos</h2>
+        </div>
+        <p style="color: var(--gray); margin-bottom: 2rem; text-align: left;">
+            Small projects and games built to practice specific skills — click any card to try them out.
+        </p>
+
+        <div class="demos-grid">
+
+            <div class="demo-card" onclick="openModal('guessGame')">
+                <div class="demo-header">
+                    <div class="demo-icon">🎯</div>
+                    <h3>Number Guessing Game</h3>
+                </div>
+                <div class="demo-body">
+                    <p>Guess a secret number between 1–100. Tracks how many guesses it takes.</p>
+                    <p style="font-size:0.8rem; color: #94a3b8;">Skills: DOM manipulation, game state, conditionals</p>
+                    <button class="demo-btn">Play Game</button>
+                </div>
+            </div>
+
+            <div class="demo-card" onclick="openModal('converter')">
+                <div class="demo-header">
+                    <div class="demo-icon">📏</div>
+                    <h3>Unit Converter</h3>
+                </div>
+                <div class="demo-body">
+                    <p>Convert between miles and kilometers in real time.</p>
+                    <p style="font-size:0.8rem; color: #94a3b8;">Skills: Form handling, math operations, UI feedback</p>
+                    <button class="demo-btn">Open Tool</button>
+                </div>
+            </div>
+
+            <div class="demo-card" onclick="openModal('slotMachine')">
+                <div class="demo-header">
+                    <div class="demo-icon">🎰</div>
+                    <h3>Slot Machine</h3>
+                </div>
+                <div class="demo-body">
+                    <p>Emoji slot machine with a score tracker and weighted payouts.</p>
+                    <p style="font-size:0.8rem; color: #94a3b8;">Skills: setInterval, randomness, score tracking</p>
+                    <button class="demo-btn">Spin Now</button>
+                </div>
+            </div>
+
+            <div class="demo-card" onclick="openModal('rockPaperScissors')">
+                <div class="demo-header">
+                    <div class="demo-icon">✊</div>
+                    <h3>Rock Paper Scissors</h3>
+                </div>
+                <div class="demo-body">
+                    <p>Classic RPS against the computer — with a hidden cheat code.</p>
+                    <p style="font-size:0.8rem; color: #94a3b8;">Skills: Event handling, game logic, Easter eggs</p>
+                    <button class="demo-btn">Play Game</button>
+                </div>
+            </div>
+
+            <div class="demo-card" onclick="openModal('crossyRPG')">
+                <div class="demo-header">
+                    <div class="demo-icon">🎮</div>
+                    <h3>Crossy RPG</h3>
+                </div>
+                <div class="demo-body">
+                    <p>Navigate past dragon enemies to reach the treasure. Built with Phaser.js.</p>
+                    <p style="font-size:0.8rem; color: #94a3b8;">Skills: Phaser.js, game physics, collision detection</p>
+                    <button class="demo-btn">Start Adventure</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ── Modals ── -->
+    <div id="guessGame" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal('guessGame')">&times;</button>
+                <h2>🎯 Number Guessing Game</h2>
+            </div>
+            <div class="modal-body">
+                <div class="game-box">
+                    <p>Guess a number between 1 and 100</p>
+                    <input type="number" id="guess" placeholder="Enter your guess" min="1" max="100">
+                    <br>
+                    <button class="game-btn" onclick="checkGuess()">Submit Guess</button>
+                    <p class="feedback-text" id="feedback"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="converter" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal('converter')">&times;</button>
+                <h2>📏 Unit Converter</h2>
+            </div>
+            <div class="modal-body">
+                <div class="game-box">
+                    <p>Enter a value and select conversion direction</p>
+                    <input type="number" placeholder="Enter number..." id="userInput">
+                    <br>
+                    <select id="unit">
+                        <option value="milesToKm">Miles → Kilometers</option>
+                        <option value="kmToMiles">Kilometers → Miles</option>
+                    </select>
+                    <br>
+                    <button class="game-btn" onclick="convert()">Convert</button>
+                    <p class="feedback-text">Result: <strong id="resultElement">—</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="slotMachine" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal('slotMachine')">&times;</button>
+                <h2>🎰 Slot Machine</h2>
+            </div>
+            <div class="modal-body">
+                <div class="game-box">
+                    <div class="slot-machine">
+                        <div class="slot" id="slot1">❓</div>
+                        <div class="slot" id="slot2">❓</div>
+                        <div class="slot" id="slot3">❓</div>
+                    </div>
+                    <button class="game-btn" onclick="spinSlots()">🎰 Spin</button>
+                    <button class="game-btn" style="background:#64748b;" onclick="resetSlots()">Reset Score</button>
+                    <p class="feedback-text" id="scoreDisplay">Total Score: 0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rockPaperScissors" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal('rockPaperScissors')">&times;</button>
+                <h2>✊ Rock Paper Scissors</h2>
+            </div>
+            <div class="modal-body">
+                <div class="game-box">
+                    <p>Click your choice:</p>
+                    <div class="game-images">
+                        <img src="images/rock.png" alt="Rock" onclick="playRPS('rock')" title="Rock">
+                        <img src="images/paper.png" alt="Paper" onclick="playRPS('paper')" title="Paper">
+                        <img src="images/scissors.png" alt="Scissors" onclick="playRPS('scissors')" title="Scissors">
+                    </div>
+                    <p class="feedback-text" id="rpsResult"></p>
+                    <button class="game-btn" id="cheatBtn" onclick="useCheatCode()">🎭 Cheat Code</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="crossyRPG" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal('crossyRPG')">&times;</button>
+                <h2>🎮 Crossy RPG</h2>
+            </div>
+            <div class="modal-body">
+                <div class="game-box">
+                    <p><strong>Use Arrow Keys to move right/left</strong><br>Avoid the dragons, reach the treasure!</p>
+                    <div id="phaserGame"></div>
+                    <p class="feedback-text" id="gameResult"></p>
+                    <button class="game-btn" id="startGame" onclick="startCrossyRPG()">▶ Start Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Jason Luyk. All rights reserved.</p>
+    </footer>
+
+    <script src="phaser.js"></script>
+    <script>
+        // ── Nav ──
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('navLinks').classList.remove('active');
+            });
+        });
+
+        // ── Modals ──
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', e => {
+                if (e.target === modal) closeModal(modal.id);
+            });
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(m => closeModal(m.id));
+            }
+        });
+
+        // ── Number Guessing Game ──
+        let secretNumber = Math.floor(Math.random() * 100) + 1;
+        let guessCount = 1;
+
+        function checkGuess() {
+            const input = document.getElementById('guess');
+            const feedback = document.getElementById('feedback');
+            const guess = parseInt(input.value);
+
+            if (!guess || guess < 1 || guess > 100) {
+                feedback.style.color = '#f59e0b';
+                feedback.textContent = 'Please enter a number between 1 and 100.';
+                return;
+            }
+
+            if (guess === secretNumber) {
+                feedback.style.color = '#10b981';
+                feedback.textContent = `🎉 Correct! You got it in ${guessCount} guess${guessCount > 1 ? 'es' : ''}!`;
+                secretNumber = Math.floor(Math.random() * 100) + 1;
+                guessCount = 1;
+            } else if (guess < secretNumber) {
+                feedback.style.color = '#ef4444';
+                feedback.textContent = `Too low! Try higher. (Guess #${guessCount})`;
+                guessCount++;
+            } else {
+                feedback.style.color = '#ef4444';
+                feedback.textContent = `Too high! Try lower. (Guess #${guessCount})`;
+                guessCount++;
+            }
+            input.value = '';
+            input.focus();
+        }
+
+        document.getElementById('guess')?.addEventListener('keydown', e => {
+            if (e.key === 'Enter') checkGuess();
+        });
+
+        // ── Unit Converter ──
+        function convert() {
+            const val = parseFloat(document.getElementById('userInput').value);
+            const unit = document.getElementById('unit').value;
+            const result = document.getElementById('resultElement');
+
+            if (isNaN(val)) {
+                result.textContent = 'Please enter a valid number';
+                return;
+            }
+
+            const converted = unit === 'milesToKm' ? (val * 1.60934).toFixed(3) : (val / 1.60934).toFixed(3);
+            const label = unit === 'milesToKm' ? 'km' : 'miles';
+            result.textContent = `${converted} ${label}`;
+        }
+
+        // ── Slot Machine ──
+        const slotEmojis = ['🍭','❌','⛄️','🦄','🌈','💩','👻','😻','👵','🤡','🦖','🎃','😂','🤑'];
+        const slotPoints = {'🍭':5,'❌':10,'⛄️':15,'🦄':20,'🌈':25,'💩':30,'👻':35,'😻':40,'👵':45,'🤡':50,'🦖':100,'🎃':110,'😂':120,'🤑':130};
+        let slotScore = 0;
+        let slotSpinning = false;
+        let slotTimers = [];
+
+        function spinSlots() {
+            if (slotSpinning) return;
+            slotSpinning = true;
+            slotTimers.forEach(clearInterval);
+            slotTimers = [];
+
+            ['slot1','slot2','slot3'].forEach(id => {
+                const timer = setInterval(() => {
+                    document.getElementById(id).textContent = slotEmojis[Math.floor(Math.random() * slotEmojis.length)];
+                }, 80);
+                slotTimers.push(timer);
+            });
+
+            setTimeout(() => {
+                slotTimers.forEach(clearInterval);
+                slotTimers = [];
+                slotSpinning = false;
+                let spin = 0;
+                ['slot1','slot2','slot3'].forEach(id => {
+                    const emoji = slotEmojis[Math.floor(Math.random() * slotEmojis.length)];
+                    document.getElementById(id).textContent = emoji;
+                    spin += slotPoints[emoji] || 0;
+                });
+                slotScore += spin;
+                document.getElementById('scoreDisplay').textContent = `Total Score: ${slotScore} (+${spin} this spin)`;
+            }, 1200);
+        }
+
+        function resetSlots() {
+            slotScore = 0;
+            document.getElementById('scoreDisplay').textContent = 'Total Score: 0';
+            ['slot1','slot2','slot3'].forEach(id => document.getElementById(id).textContent = '❓');
+        }
+
+        // ── Rock Paper Scissors ──
+        const rpsChoices = ['rock', 'paper', 'scissors'];
+        let cheatUsed = false;
+
+        function playRPS(userChoice) {
+            const computer = rpsChoices[Math.floor(Math.random() * rpsChoices.length)];
+            const result = document.getElementById('rpsResult');
+            let outcome;
+
+            if (userChoice === computer) {
+                outcome = "It's a tie!";
+                result.style.color = '#f59e0b';
+            } else if (
+                (userChoice === 'rock' && computer === 'scissors') ||
+                (userChoice === 'paper' && computer === 'rock') ||
+                (userChoice === 'scissors' && computer === 'paper')
+            ) {
+                outcome = '🎉 You win!';
+                result.style.color = '#10b981';
+            } else {
+                outcome = '😞 You lose!';
+                result.style.color = '#ef4444';
+            }
+
+            result.textContent = `You chose ${userChoice}, computer chose ${computer}. ${outcome}`;
+        }
+
+        function useCheatCode() {
+            if (cheatUsed) return;
+            const code = prompt('Enter the cheat code:');
+            const btn = document.getElementById('cheatBtn');
+            const result = document.getElementById('rpsResult');
+            btn.style.display = 'none';
+            cheatUsed = true;
+            if (code === 'bomb') {
+                result.style.color = '#10b981';
+                result.textContent = '💣 BOMB activated! You win! Game over!';
+            } else {
+                result.style.color = '#ef4444';
+                result.textContent = 'Wrong code! Pick an image instead.';
+            }
+        }
+
+        // ── Crossy RPG ──
+        let crossyGame = null;
+
+        function startCrossyRPG() {
+            document.getElementById('startGame').style.display = 'none';
+            if (crossyGame) { crossyGame.destroy(true); crossyGame = null; }
+
+            let gameScene = new Phaser.Scene('Game');
+            gameScene.init = function() {
+                this.playerSpeed = 3;
+                this.enemyMinSpeed = 1;
+                this.enemyMaxSpeed = 3;
+                this.enemyMinY = 80;
+                this.enemyMaxY = 280;
+                this.isTerminating = false;
+            };
+            gameScene.preload = function() {
+                this.load.image('background', './assets/background.png');
+                this.load.image('player', './assets/player.png');
+                this.load.image('enemy', './assets/dragon.png');
+                this.load.image('goal', './assets/treasure.png');
+            };
+            gameScene.create = function() {
+                let bg = this.add.sprite(0, 0, 'background');
+                bg.setOrigin(0, 0);
+                this.player = this.add.sprite(40, this.sys.game.config.height / 2, 'player');
+                this.player.setScale(0.5);
+                this.goal = this.add.sprite(this.sys.game.config.width - 80, this.sys.game.config.height / 2, 'goal');
+                this.goal.setScale(0.6);
+                this.enemies = this.add.group({
+                    key: 'enemy',
+                    repeat: Math.floor(Math.random() * 4) + 1,
+                    setXY: { x: 90, y: 100, stepX: 80, stepY: 20 }
+                });
+                Phaser.Actions.ScaleXY(this.enemies.getChildren(), -0.4, -0.4);
+                Phaser.Actions.Call(this.enemies.getChildren(), function(enemy) {
+                    enemy.flipX = true;
+                    let dir = Math.random() < 0.5 ? 1 : -1;
+                    let speed = this.enemyMinSpeed + Math.random() * (this.enemyMaxSpeed - this.enemyMinSpeed);
+                    enemy.speed = dir * speed;
+                }, this);
+            };
+            gameScene.update = function() {
+                let cursors = this.input.keyboard.createCursorKeys();
+                if (this.isTerminating) return;
+                if (cursors.right.isDown) this.player.x += this.playerSpeed;
+                else if (cursors.left.isDown) this.player.x -= this.playerSpeed;
+
+                let pRect = this.player.getBounds();
+                if (Phaser.Geom.Intersects.RectangleToRectangle(pRect, this.goal.getBounds())) {
+                    document.getElementById('gameResult').textContent = '🏆 You Win! Play again?';
+                    return this.gameOver();
+                }
+                this.enemies.getChildren().forEach(enemy => {
+                    enemy.y += enemy.speed;
+                    if ((enemy.speed < 0 && enemy.y <= this.enemyMinY) || (enemy.speed > 0 && enemy.y >= this.enemyMaxY)) {
+                        enemy.speed *= -1;
+                    }
+                    if (Phaser.Geom.Intersects.RectangleToRectangle(pRect, enemy.getBounds())) {
+                        document.getElementById('gameResult').textContent = '💀 Game Over! Try again?';
+                        return this.gameOver();
+                    }
+                });
+            };
+            gameScene.gameOver = function() {
+                this.isTerminating = true;
+                this.cameras.main.shake(500);
+                this.cameras.main.on('camerashakecomplete', function() {
+                    this.cameras.main.fade(500);
+                }, this);
+                this.cameras.main.on('camerafadeoutcomplete', function() {
+                    this.scene.restart();
+                    document.getElementById('startGame').style.display = 'inline-block';
+                    document.getElementById('startGame').textContent = '▶ Play Again';
+                }, this);
+            };
+
+            crossyGame = new Phaser.Game({
+                type: Phaser.AUTO,
+                width: 640,
+                height: 360,
+                parent: 'phaserGame',
+                scene: gameScene
+            });
+        }
+
+        // Destroy phaser game when modal closes to free memory
+        document.getElementById('crossyRPG').addEventListener('click', function(e) {
+            if (e.target === this && crossyGame) {
+                crossyGame.destroy(true);
+                crossyGame = null;
+                document.getElementById('startGame').style.display = 'inline-block';
+                document.getElementById('startGame').textContent = '▶ Start Game';
+                document.getElementById('gameResult').textContent = '';
+            }
+        });
+    </script>
+</body>
+</html>
