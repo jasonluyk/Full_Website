@@ -100,7 +100,26 @@ export default function Navbar() {
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
 
-          {/* Admin link */}
+          {/* Back to main site */}
+          <a
+            href="/"
+            style={{
+              padding: '6px 12px',
+              borderRadius: 6,
+              textDecoration: 'none',
+              fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: '0.05em',
+              color: 'var(--text-muted)',
+              border: '1px solid var(--border)',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            ← My Site
+          </a>
+
+        {/* Admin link */}
           <NavLink
             to="/admin"
             style={{
