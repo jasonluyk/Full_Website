@@ -15,16 +15,14 @@ node server.js &
 
 # Start WGI scraper worker
 cd /root/Full_Website/New_WGI
-source venv/bin/activate
-python backend/scraper_worker.py &
+/root/Full_Website/New_WGI/venv/bin/python backend/scraper_worker.py &
 
 # Start WGI FastAPI
-uvicorn backend.main:app --host 0.0.0.0 --port 8000 &
+/root/Full_Website/New_WGI/venv/bin/uvicorn backend.main:app --host 0.0.0.0 --port 8000 &
 
 # Start Softball FastAPI
 cd /root/Full_Website/Softball_App/backend
-source venv/bin/activate
-uvicorn main:app --host 0.0.0.0 --port 9000 &
+/root/Full_Website/Softball_App/backend/venv/bin/uvicorn main:app --host 0.0.0.0 --port 9000 &
 
 # Start nginx
 nginx -g "daemon off;"
