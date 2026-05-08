@@ -10,19 +10,19 @@ fuser -k 9000/tcp 2>/dev/null
 fuser -k 3000/tcp 2>/dev/null
 
 # Start personal site Node.js server
-cd /root/Full_Website/myWebsite/api
-node server.js &
+(cd /root/Full_Website/myWebsite/api && node server.js) &
 
 # Start WGI scraper worker
-cd /root/Full_Website/New_WGI
-/root/Full_Website/New_WGI/venv/bin/python backend/scraper_worker.py &
+(cd /root/Full_Website/New_WGI && /root/Full_Website/New_WGI/venv/bin/python backend/scraper_worker.py) &
 
 # Start WGI FastAPI
-/root/Full_Website/New_WGI/venv/bin/uvicorn backend.main:app --host 0.0.0.0 --port 8000 &
+(cd /root/Full_Website/New_WGI && /root/Full_Website/New_WGI/venv/bin/uvicorn backend.main:app --host 0.0.0.0 --port 8000) &
 
-# Start Softball FastAPI (must run from backend/ directory for scraper imports)
-cd /root/Full_Website/Softball_App/backend
-/root/Full_Website/Softball_App/backend/venv/bin/uvicorn main:app --host 0.0.0.0 --port 9000 &
+# Start Softball FastAPI
+(cd /root/Full_Website/Softball_App/backend && /root/Full_Website/Softball_App/backend/venv/bin/uvicorn main:app --host 0.0.0.0 --port 9000) &
 
-# Start nginx
+# Give all services a moment to start
+sleep 2
+
+# Start nginx (blocking — must be last)
 nginx -g "daemon off;"
