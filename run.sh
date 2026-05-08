@@ -6,6 +6,7 @@ set +a
 # Kill anything on these ports
 fuser -k 80/tcp 2>/dev/null
 fuser -k 8000/tcp 2>/dev/null
+fuser -k 9000/tcp 2>/dev/null
 fuser -k 3000/tcp 2>/dev/null
 
 # Start personal site Node.js server
@@ -19,6 +20,11 @@ python backend/scraper_worker.py &
 
 # Start WGI FastAPI
 uvicorn backend.main:app --host 0.0.0.0 --port 8000 &
+
+# Start Softball FastAPI
+cd /root/Full_Website/Softball_App/backend
+source venv/bin/activate
+uvicorn main:app --host 0.0.0.0 --port 9000 &
 
 # Start nginx
 nginx -g "daemon off;"

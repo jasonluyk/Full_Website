@@ -1,7 +1,9 @@
 # Environment files - NEVER commit these
 myWebsite/api/.env
 New_WGI/backend/.env
+Softball_App/backend/.env
 .env
+
 
 # Python
 New_WGI/venv/
