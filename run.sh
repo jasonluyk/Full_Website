@@ -18,11 +18,11 @@ fuser -k 3000/tcp 2>/dev/null
 # Start WGI FastAPI
 (cd /root/Full_Website/New_WGI && /root/Full_Website/New_WGI/venv/bin/uvicorn backend.main:app --host 0.0.0.0 --port 8000) &
 
-#Start Softball scraper
-(cd /root/Full_Website/Softball_App && /root/Full_Website/Softball_App/ backend/scraper.py) &
+# #Start Softball scraper
+# (cd /root/Full_Website/Softball_App && /root/Full_Website/Softball_App/ backend/scraper.py) &
 
 # Start Softball FastAPI
-(cd /root/Full_Website/Softball_App/backend && /root/Full_Website/Softball_App/backend/venv/bin/uvicorn main:app --host 0.0.0.0 --port 9000) >> /root/startup.log 2>&1 &
+(cd /root/Full_Website/Softball_App/backend && /root/Full_Website/Softball_App/backend/venv/bin/uvicorn backend.main:app --host 0.0.0.0 --port 9000) >> /root/startup.log 2>&1 &
 
 # Give all services a moment to start
 sleep 2
