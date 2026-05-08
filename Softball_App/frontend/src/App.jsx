@@ -11,7 +11,7 @@ export default function App() {
       <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Tournament />} />
+          <Route path="" element={<Tournament />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/predictor" element={<Predictor />} />
         </Routes>
