@@ -20,7 +20,7 @@ cd /root/Full_Website/New_WGI
 # Start WGI FastAPI
 /root/Full_Website/New_WGI/venv/bin/uvicorn backend.main:app --host 0.0.0.0 --port 8000 &
 
-# Start Softball FastAPI
+# Start Softball FastAPI (must run from backend/ directory for scraper imports)
 cd /root/Full_Website/Softball_App/backend
 /root/Full_Website/Softball_App/backend/venv/bin/uvicorn main:app --host 0.0.0.0 --port 9000 &
 
