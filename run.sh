@@ -19,7 +19,7 @@ fuser -k 3000/tcp 2>/dev/null
 (cd /root/Full_Website/New_WGI && /root/Full_Website/New_WGI/venv/bin/uvicorn backend.main:app --host 0.0.0.0 --port 8000) &
 
 #Start Softball scraper
-(cd /root/Full_Website/Softball_App && /root/Full_Website/Softball_App/venv/bin/python backend/scraper.py) &
+(cd /root/Full_Website/Softball_App && /root/Full_Website/Softball_App/ backend/scraper.py) &
 
 # Start Softball FastAPI
 (cd /root/Full_Website/Softball_App/backend && /root/Full_Website/Softball_App/backend/venv/bin/uvicorn main:app --host 0.0.0.0 --port 9000) >> /root/startup.log 2>&1 &
