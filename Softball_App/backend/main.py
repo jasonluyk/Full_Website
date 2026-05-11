@@ -29,6 +29,9 @@ mongo_url = os.environ.get("MONGO_URI")
 client = pymongo.MongoClient(mongo_url)
 db = client["softball_db"]
 
+# Ensure unique index on trnid + division name
+db["tournament_data"].create_index([("trnid", 1), ("name", 1)], unique=True)
+
 ADMIN_PASS = os.environ.get("ADMIN_PASS", "admin")
 
 # ── Auth ──────────────────────────────────────────────────────────────
