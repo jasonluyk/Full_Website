@@ -343,7 +343,7 @@ export default function Tournament() {
             onClick={() => setActiveDivision(d.name)}
             style={{
               padding: isMobile ? '6px 12px' : '7px 16px',
-              borderRadius: 8, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+              borderRadius: 8, cursor: 'pointer', whiteSpace: 'nowrap',
               fontFamily: 'Barlow Condensed, sans-serif',
               fontSize: isMobile ? 13 : 14, fontWeight: 700, letterSpacing: '0.04em',
               background: d.name === activeDivision ? 'var(--accent)' : 'var(--bg-card)',
