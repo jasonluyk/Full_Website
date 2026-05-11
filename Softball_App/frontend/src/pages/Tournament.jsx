@@ -12,11 +12,7 @@ function useIsMobile() {
 
 function ScoreCell({ score, winner }) {
   if (!score) return <span style={{ color: 'var(--text-muted)' }}>—</span>
-  return (
-    <strong style={{ color: winner ? 'var(--green)' : 'var(--text-primary)', fontSize: 16 }}>
-      {score}
-    </strong>
-  )
+  return <strong style={{ color: winner ? 'var(--green)' : 'var(--text-primary)', fontSize: 16 }}>{score}</strong>
 }
 
 function seedTeams(teams, poolGames) {
@@ -33,7 +29,6 @@ function seedTeams(teams, poolGames) {
     if (sa > sb) { h2h[ta][tb].winsA++; h2h[tb][ta].winsB++ }
     else if (sb > sa) { h2h[tb][ta].winsA++; h2h[ta][tb].winsB++ }
   }
-
   const sorted = [...teams].sort((a, b) => {
     const wonDiff = b.won - a.won
     if (wonDiff !== 0) return wonDiff
@@ -62,16 +57,10 @@ function StandingsTable({ teams, poolGames }) {
         {seeded.map((t, i) => {
           const diff = t.runs_scored - t.runs_allowed
           return (
-            <div key={i} style={{
-              display: 'flex', alignItems: 'center', gap: 12,
-              padding: '10px 12px', marginBottom: 6,
-              background: 'var(--bg-card)', borderRadius: 10,
-              border: '1px solid var(--border)'
-            }}>
-              <div style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 28,
-                fontWeight: 900, color: 'var(--accent)', width: 36, textAlign: 'center', flexShrink: 0 }}>
-                {t.seed}
-              </div>
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px',
+              marginBottom: 6, background: 'var(--bg-card)', borderRadius: 10, border: '1px solid var(--border)' }}>
+              <div style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 28, fontWeight: 900,
+                color: 'var(--accent)', width: 36, textAlign: 'center', flexShrink: 0 }}>{t.seed}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontWeight: 600, fontSize: 14, whiteSpace: 'nowrap',
                   overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.team}</div>
@@ -79,15 +68,11 @@ function StandingsTable({ teams, poolGames }) {
               </div>
               <div style={{ display: 'flex', gap: 10, flexShrink: 0, fontSize: 13 }}>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ color: 'var(--green)', fontWeight: 700 }}>
-                    {t.won % 1 === 0.5 ? `${Math.floor(t.won)}.5` : t.won}
-                  </div>
+                  <div style={{ color: 'var(--green)', fontWeight: 700 }}>{t.won % 1 === 0.5 ? `${Math.floor(t.won)}.5` : t.won}</div>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>W</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ color: 'var(--red)' }}>
-                    {t.lost % 1 === 0.5 ? `${Math.floor(t.lost)}.5` : t.lost}
-                  </div>
+                  <div style={{ color: 'var(--red)' }}>{t.lost % 1 === 0.5 ? `${Math.floor(t.lost)}.5` : t.lost}</div>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>L</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
@@ -100,11 +85,7 @@ function StandingsTable({ teams, poolGames }) {
             </div>
           )
         })}
-        {anyScored && (
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>
-            Tiebreakers: W-L → H2H → RA → RS → Run Diff
-          </div>
-        )}
+        {anyScored && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>Tiebreakers: W-L → H2H → RA → RS → Run Diff</div>}
       </div>
     )
   }
@@ -129,16 +110,11 @@ function StandingsTable({ teams, poolGames }) {
             const diff = t.runs_scored - t.runs_allowed
             return (
               <tr key={i}>
-                <td style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 20,
-                  fontWeight: 800, color: 'var(--accent)', textAlign: 'center' }}>{t.seed}</td>
+                <td style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 20, fontWeight: 800, color: 'var(--accent)', textAlign: 'center' }}>{t.seed}</td>
                 <td style={{ fontWeight: 600 }}>{t.team}</td>
                 <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t.location}</td>
-                <td style={{ color: 'var(--green)', fontWeight: 700 }}>
-                  {t.won % 1 === 0.5 ? `${Math.floor(t.won)}.5` : t.won}
-                </td>
-                <td style={{ color: 'var(--red)' }}>
-                  {t.lost % 1 === 0.5 ? `${Math.floor(t.lost)}.5` : t.lost}
-                </td>
+                <td style={{ color: 'var(--green)', fontWeight: 700 }}>{t.won % 1 === 0.5 ? `${Math.floor(t.won)}.5` : t.won}</td>
+                <td style={{ color: 'var(--red)' }}>{t.lost % 1 === 0.5 ? `${Math.floor(t.lost)}.5` : t.lost}</td>
                 <td>{t.runs_scored}</td>
                 <td>{t.runs_allowed}</td>
                 <td style={{ color: diff > 0 ? 'var(--green)' : diff < 0 ? 'var(--red)' : 'var(--text-muted)', fontWeight: 600 }}>
@@ -162,44 +138,31 @@ function GameCard({ g }) {
   const sa = parseInt(g.score_a), sb = parseInt(g.score_b)
   const aWins = g.complete && !isNaN(sa) && !isNaN(sb) && sa > sb
   const bWins = g.complete && !isNaN(sa) && !isNaN(sb) && sb > sa
-
   return (
-    <div style={{
-      background: g.complete ? 'rgba(34,197,94,0.04)' : 'var(--bg-card)',
+    <div style={{ background: g.complete ? 'rgba(34,197,94,0.04)' : 'var(--bg-card)',
       border: `1px solid ${g.complete ? 'rgba(34,197,94,0.2)' : 'var(--border)'}`,
-      borderRadius: 10, padding: '10px 12px', marginBottom: 8
-    }}>
-      {/* Time + Field */}
+      borderRadius: 10, padding: '10px 12px', marginBottom: 8 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
         <span style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 600 }}>{g.time}</span>
         <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{g.field}</span>
       </div>
-      {/* Teams + Scores */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontWeight: aWins ? 700 : 500, color: aWins ? 'var(--green)' : 'var(--text-primary)',
-            fontSize: 14, flex: 1 }}>{g.team_a}</span>
+          <span style={{ fontWeight: aWins ? 700 : 500, color: aWins ? 'var(--green)' : 'var(--text-primary)', fontSize: 14, flex: 1 }}>{g.team_a}</span>
           <span style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 22, fontWeight: 800,
-            color: aWins ? 'var(--green)' : g.complete ? 'var(--text-muted)' : 'transparent',
-            minWidth: 32, textAlign: 'right' }}>
+            color: aWins ? 'var(--green)' : g.complete ? 'var(--text-muted)' : 'transparent', minWidth: 32, textAlign: 'right' }}>
             {g.complete ? g.score_a : '—'}
           </span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontWeight: bWins ? 700 : 500, color: bWins ? 'var(--green)' : 'var(--text-primary)',
-            fontSize: 14, flex: 1 }}>{g.team_b}</span>
+          <span style={{ fontWeight: bWins ? 700 : 500, color: bWins ? 'var(--green)' : 'var(--text-primary)', fontSize: 14, flex: 1 }}>{g.team_b}</span>
           <span style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 22, fontWeight: 800,
-            color: bWins ? 'var(--green)' : g.complete ? 'var(--text-muted)' : 'transparent',
-            minWidth: 32, textAlign: 'right' }}>
+            color: bWins ? 'var(--green)' : g.complete ? 'var(--text-muted)' : 'transparent', minWidth: 32, textAlign: 'right' }}>
             {g.complete ? g.score_b : '—'}
           </span>
         </div>
       </div>
-      {g.complete && (
-        <div style={{ marginTop: 6, textAlign: 'right' }}>
-          <span className="badge badge-green" style={{ fontSize: 10 }}>Final</span>
-        </div>
-      )}
+      {g.complete && <div style={{ marginTop: 6, textAlign: 'right' }}><span className="badge badge-green" style={{ fontSize: 10 }}>Final</span></div>}
     </div>
   )
 }
@@ -207,13 +170,10 @@ function GameCard({ g }) {
 function GamesTable({ games, title }) {
   const isMobile = useIsMobile()
   if (!games || games.length === 0) return null
-
   return (
     <div style={{ marginBottom: 28 }}>
       <h3 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 18, fontWeight: 700,
-        color: 'var(--text-secondary)', letterSpacing: '0.05em', textTransform: 'uppercase',
-        marginBottom: 12 }}>{title}</h3>
-
+        color: 'var(--text-secondary)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 12 }}>{title}</h3>
       {isMobile ? (
         <div>{games.map((g, i) => <GameCard key={i} g={g} />)}</div>
       ) : (
@@ -257,71 +217,19 @@ function GamesTable({ games, title }) {
   )
 }
 
-export default function Tournament() {
+function DivisionView({ division }) {
+  const completedPool = division.pool_play?.filter(g => g.complete).length || 0
+  const totalPool = division.pool_play?.length || 0
+  const completedBracket = division.brackets?.flatMap(b => b.games).filter(g => g.complete).length || 0
+  const totalBracket = division.brackets?.flatMap(b => b.games).length || 0
   const isMobile = useIsMobile()
-  const [data, setData] = useState(null)
-  const [status, setStatus] = useState('none')
-  const [loading, setLoading] = useState(true)
-  const [lastUpdated, setLastUpdated] = useState(null)
-
-  const fetchData = () => {
-    fetch('/softball/api/softball/tournament')
-      .then(r => r.json())
-      .then(res => { setData(res.data); setStatus(res.status); setLastUpdated(new Date()); setLoading(false) })
-      .catch(() => setLoading(false))
-  }
-
-  useEffect(() => {
-    fetchData()
-    const interval = setInterval(fetchData, 120000)
-    return () => clearInterval(interval)
-  }, [])
-
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: 80 }}><div className="spinner" /></div>
-
-  if (status === 'none' || !data) return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 16px' }}>
-      <h1 className="page-title">🥎 Softball Tournament Tracker</h1>
-      <div className="alert alert-info" style={{ marginTop: 20 }}>No tournament loaded. Use Admin to sync a tournament.</div>
-    </div>
-  )
-
-  const completedPool = data.pool_play?.filter(g => g.complete).length || 0
-  const totalPool = data.pool_play?.length || 0
-  const completedBracket = data.brackets?.flatMap(b => b.games).filter(g => g.complete).length || 0
-  const totalBracket = data.brackets?.flatMap(b => b.games).length || 0
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '16px 12px' : '32px 24px' }}>
-
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <div className="live-dot" />
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
-              textTransform: 'uppercase', color: 'var(--accent)' }}>TOP GUN SPORTS</span>
-          </div>
-          <h1 style={{ fontFamily: 'Barlow Condensed, sans-serif',
-            fontSize: isMobile ? 22 : 32, fontWeight: 800, margin: 0 }}>
-            🥎 {data.name}
-          </h1>
-          {lastUpdated && (
-            <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: '4px 0 0' }}>
-              Updated {lastUpdated.toLocaleTimeString()} · Auto-refreshes every 2 min
-            </p>
-          )}
-        </div>
-        <button className="btn btn-secondary" onClick={fetchData}
-          style={{ fontSize: isMobile ? 18 : 14, padding: isMobile ? '8px 12px' : undefined }}>
-          ↻
-        </button>
-      </div>
-
+    <>
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 24 }}>
         <div className="stat-card">
-          <div className="stat-value">{data.standings?.length || 0}</div>
+          <div className="stat-value">{division.standings?.length || 0}</div>
           <div className="stat-label">Teams</div>
         </div>
         <div className="stat-card">
@@ -333,25 +241,123 @@ export default function Tournament() {
           <div className="stat-label">Bracket Games</div>
         </div>
         <div className="stat-card">
-          <div className="stat-value">{data.brackets?.length || 0}</div>
+          <div className="stat-value">{division.brackets?.length || 0}</div>
           <div className="stat-label">Brackets</div>
         </div>
       </div>
 
       {/* Standings */}
-      {data.standings?.length > 0 && (
+      {division.standings?.length > 0 && (
         <>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
-            <h2 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: isMobile ? 20 : 24,
-              fontWeight: 800, margin: 0 }}>📊 Projected Seeding</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <h2 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: isMobile ? 20 : 24, fontWeight: 800, margin: 0 }}>
+              📊 Projected Seeding
+            </h2>
             <span className="badge badge-gold">Live</span>
           </div>
-          <StandingsTable teams={data.standings} poolGames={data.pool_play || []} />
+          <StandingsTable teams={division.standings} poolGames={division.pool_play || []} />
         </>
       )}
 
-      {data.pool_play?.length > 0 && <GamesTable games={data.pool_play} title="Pool Play" />}
-      {data.brackets?.map((b, i) => <GamesTable key={i} games={b.games} title={b.name} />)}
+      {division.pool_play?.length > 0 && <GamesTable games={division.pool_play} title="Pool Play" />}
+      {division.brackets?.map((b, i) => <GamesTable key={i} games={b.games} title={b.name} />)}
+    </>
+  )
+}
+
+export default function Tournament() {
+  const isMobile = useIsMobile()
+  const [divisions, setDivisions] = useState([])
+  const [trnName, setTrnName] = useState('')
+  const [status, setStatus] = useState('none')
+  const [loading, setLoading] = useState(true)
+  const [lastUpdated, setLastUpdated] = useState(null)
+  const [activeDivision, setActiveDivision] = useState(
+    () => localStorage.getItem('active_division') || ''
+  )
+
+  const fetchData = () => {
+    fetch('/softball/api/softball/tournament')
+      .then(r => r.json())
+      .then(res => {
+        setDivisions(res.divisions || [])
+        setTrnName(res.name || '')
+        setStatus(res.status)
+        setLastUpdated(new Date())
+        setLoading(false)
+        // Auto-select first division if none selected or saved one gone
+        if (res.divisions?.length > 0) {
+          const names = res.divisions.map(d => d.name)
+          if (!activeDivision || !names.includes(activeDivision)) {
+            setActiveDivision(res.divisions[0].name)
+          }
+        }
+      })
+      .catch(() => setLoading(false))
+  }
+
+  useEffect(() => { fetchData(); const i = setInterval(fetchData, 120000); return () => clearInterval(i) }, [])
+  useEffect(() => { localStorage.setItem('active_division', activeDivision) }, [activeDivision])
+
+  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: 80 }}><div className="spinner" /></div>
+
+  if (status === 'none' || divisions.length === 0) return (
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 16px' }}>
+      <h1 className="page-title">🥎 Softball Tournament Tracker</h1>
+      <div className="alert alert-info" style={{ marginTop: 20 }}>No tournament loaded. Use Admin to sync a tournament.</div>
+    </div>
+  )
+
+  const currentDivision = divisions.find(d => d.name === activeDivision) || divisions[0]
+
+  return (
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '16px 12px' : '32px 24px' }}>
+
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <div className="live-dot" />
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)' }}>
+              TOP GUN SPORTS
+            </span>
+          </div>
+          <h1 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: isMobile ? 20 : 28, fontWeight: 800, margin: 0 }}>
+            🥎 {trnName || 'Tournament'}
+          </h1>
+          {lastUpdated && (
+            <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: '4px 0 0' }}>
+              Updated {lastUpdated.toLocaleTimeString()} · Auto-refreshes every 2 min
+            </p>
+          )}
+        </div>
+        <button className="btn btn-secondary" onClick={fetchData}
+          style={{ fontSize: isMobile ? 18 : 14, padding: isMobile ? '8px 12px' : undefined }}>↻</button>
+      </div>
+
+      {/* Division tabs */}
+      <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 4, marginBottom: 20,
+        scrollbarWidth: 'none' }}>
+        {divisions.map(d => (
+          <button key={d.name}
+            onClick={() => setActiveDivision(d.name)}
+            style={{
+              padding: isMobile ? '6px 12px' : '7px 16px',
+              borderRadius: 8, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+              fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: isMobile ? 13 : 14, fontWeight: 700, letterSpacing: '0.04em',
+              background: d.name === activeDivision ? 'var(--accent)' : 'var(--bg-card)',
+              color: d.name === activeDivision ? '#000' : 'var(--text-secondary)',
+              border: `1px solid ${d.name === activeDivision ? 'var(--accent)' : 'var(--border)'}`,
+              transition: 'all 0.15s ease',
+            }}>
+            {d.name}
+          </button>
+        ))}
+      </div>
+
+      {/* Current division content */}
+      {currentDivision && <DivisionView division={currentDivision} />}
     </div>
   )
 }

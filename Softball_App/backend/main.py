@@ -55,8 +55,9 @@ def background_sync_loop():
             if not scrape_tournament:
                 print("⚠️ Scraper not available")
                 continue
-            print(f"🔄 Background sync: {active.get('division', 'all')}...")
-            divisions = scrape_tournament(active["trnid"], active.get("division"))
+            div_filter = active.get("division")
+            print(f"🔄 Background sync: trnid={active['trnid']} {'(' + div_filter + ')' if div_filter else '(all divisions)'}...")
+            divisions = scrape_tournament(active["trnid"], div_filter)
             if divisions:
                 for div in divisions:
                     db["tournament_data"].replace_one(
@@ -115,22 +116,33 @@ app.add_middleware(CORSMiddleware,
 
 @app.get("/api/softball/tournament")
 def get_tournament():
-    """Returns current tournament data."""
+    """Returns all divisions for the current tournament."""
+    active = db["active_tournament"].find_one({"type": "current"}, {"_id": 0})
+    if not active:
+        return {"divisions": [], "status": "none", "trnid": None, "name": None}
+
+    trnid = active.get("trnid")
+    docs = list(db["tournament_data"].find({"trnid": trnid}, {"_id": 0}))
+
+    return {
+        "divisions": docs,
+        "trnid": trnid,
+        "name": active.get("name", ""),
+        "status": "active" if docs else "syncing"
+    }
+
+
+@app.get("/api/softball/tournament/{division_name}")
+def get_tournament_division(division_name: str):
+    """Returns a specific division for the current tournament."""
     active = db["active_tournament"].find_one({"type": "current"}, {"_id": 0})
     if not active:
         return {"data": None, "status": "none"}
-
     trnid = active.get("trnid")
-    division = active.get("division")
     doc = db["tournament_data"].find_one(
-        {"trnid": trnid, "name": division}, {"_id": 0}
+        {"trnid": trnid, "name": division_name}, {"_id": 0}
     )
-    return {
-        "data": doc,
-        "trnid": trnid,
-        "division": division,
-        "status": "active" if doc else "syncing"
-    }
+    return {"data": doc, "trnid": trnid, "status": "active" if doc else "not_found"}
 
 
 @app.post("/api/admin/softball/sync")
@@ -138,9 +150,11 @@ def admin_sync(
     payload: dict,
     username: str = Depends(verify_admin)
 ):
-    """Trigger a scrape. Body: {trnid, division}"""
+    """Trigger a scrape. Body: {trnid, name?, division?}
+    If division is empty, scrapes ALL divisions for the tournament."""
     trnid = payload.get("trnid", "").strip()
-    division = payload.get("division", "").strip()
+    division = payload.get("division", "").strip() or None
+    name = payload.get("name", "").strip()
 
     if not trnid:
         raise HTTPException(status_code=400, detail="trnid required")
@@ -148,7 +162,7 @@ def admin_sync(
     # Save as active tournament
     db["active_tournament"].replace_one(
         {"type": "current"},
-        {"type": "current", "trnid": trnid, "division": division or None},
+        {"type": "current", "trnid": trnid, "division": division, "name": name},
         upsert=True
     )
 
@@ -158,7 +172,7 @@ def admin_sync(
             if not scrape_tournament:
                 print("⚠️ Scraper not available")
                 return
-            divisions = scrape_tournament(trnid, division or None)
+            divisions = scrape_tournament(trnid, division)
             for div in divisions:
                 db["tournament_data"].replace_one(
                     {"trnid": trnid, "name": div["name"]},
@@ -172,7 +186,7 @@ def admin_sync(
     t = threading.Thread(target=do_scrape, daemon=True)
     t.start()
 
-    return {"message": f"Sync started for trnid={trnid}"}
+    return {"message": f"Sync started for trnid={trnid} ({'all divisions' if not division else division})"}
 
 
 @app.delete("/api/admin/softball/clear")
