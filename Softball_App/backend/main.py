@@ -16,6 +16,14 @@ load_dotenv(Path(__file__).parent / '.env')
 import sys
 sys.path.insert(0, str(Path(__file__).parent))
 
+# ── Scraper import ───────────────────────────────────────────────────
+try:
+    from scraper import scrape_tournament
+    print("✅ Scraper imported successfully")
+except Exception as e:
+    print(f"⚠️ Scraper import failed: {e}")
+    scrape_tournament = None
+
 # ── Database ──────────────────────────────────────────────────────────
 mongo_url = os.environ.get("MONGO_URI")
 client = pymongo.MongoClient(mongo_url)
@@ -37,28 +45,62 @@ def verify_admin(credentials: HTTPBasicCredentials = Depends(security)):
 _sync_thread = None
 
 def background_sync_loop():
-    """Auto-resync every 5 minutes if a tournament is active."""
+    """Auto-resync every 2 minutes if a tournament is active."""
     while True:
         time.sleep(120)
-        active = db["active_tournament"].find_one({"type": "current"})
-        if active and active.get("trnid") and active.get("division"):
-            try:
-                from scraper import scrape_tournament
-                divisions = scrape_tournament(active["trnid"], active["division"])
-                if divisions:
+        try:
+            active = db["active_tournament"].find_one({"type": "current"})
+            if not active or not active.get("trnid"):
+                continue
+            if not scrape_tournament:
+                print("⚠️ Scraper not available")
+                continue
+            print(f"🔄 Background sync: {active.get('division', 'all')}...")
+            divisions = scrape_tournament(active["trnid"], active.get("division"))
+            if divisions:
+                for div in divisions:
                     db["tournament_data"].replace_one(
-                        {"trnid": active["trnid"], "division": divisions[0]["name"]},
-                        {"trnid": active["trnid"], **divisions[0]},
+                        {"trnid": active["trnid"], "name": div["name"]},
+                        {"trnid": active["trnid"], **div},
                         upsert=True
                     )
-                    print(f"✅ Auto-synced {active['division']}")
-            except Exception as e:
-                print(f"⚠️ Auto-sync error: {e}")
+                print(f"✅ Auto-synced {len(divisions)} division(s)")
+            else:
+                print(f"⚠️ Auto-sync returned no data for trnid={active['trnid']}")
+        except Exception as e:
+            import traceback
+            print(f"⚠️ Auto-sync error: {e}")
+            traceback.print_exc()
+
+def startup_sync():
+    """On startup, immediately sync if there's an active tournament."""
+    time.sleep(5)  # Wait for DB connection to settle
+    active = db["active_tournament"].find_one({"type": "current"})
+    if active and active.get("trnid") and active.get("division"):
+        print(f"🔄 Auto-syncing on startup: {active['division']}...")
+        try:
+            if not scrape_tournament:
+                print("⚠️ Scraper not available for startup sync")
+                return
+            divisions = scrape_tournament(active["trnid"], active["division"])
+            for div in divisions:
+                db["tournament_data"].replace_one(
+                    {"trnid": active["trnid"], "name": div["name"]},
+                    {"trnid": active["trnid"], **div},
+                    upsert=True
+                )
+            print(f"✅ Startup sync complete")
+        except Exception as e:
+            print(f"⚠️ Startup sync error: {e}")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global _sync_thread
     print("🥎 Softball API starting...")
+    # Sync on startup if tournament is active
+    threading.Thread(target=startup_sync, daemon=True).start()
+    # Start background polling loop
     _sync_thread = threading.Thread(target=background_sync_loop, daemon=True)
     _sync_thread.start()
     yield
@@ -113,7 +155,9 @@ def admin_sync(
     # Scrape in background
     def do_scrape():
         try:
-            from scraper import scrape_tournament
+            if not scrape_tournament:
+                print("⚠️ Scraper not available")
+                return
             divisions = scrape_tournament(trnid, division or None)
             for div in divisions:
                 db["tournament_data"].replace_one(
