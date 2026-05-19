@@ -33,9 +33,97 @@ export default function SoftballAdmin() {
     </div>
   )
 
+  const [upcoming, setUpcoming] = useState([])
+  const [loadingUpcoming, setLoadingUpcoming] = useState(false)
+  const [upcomingError, setUpcomingError] = useState('')
+
+  const fetchUpcoming = async () => {
+    setLoadingUpcoming(true)
+    setUpcomingError('')
+    try {
+      // Fetch from browser (residential IP — not blocked)
+      const resp = await fetch('https://playtopgunsports.com/UpcomingTournaments.aspx')
+      const html = await resp.text()
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(html, 'text/html')
+      const rows = doc.querySelectorAll('#ctl00_siteContentPlaceHolder_softballGridView tr:not(:first-child)')
+      const tournaments = []
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td')
+        if (cells.length >= 4) {
+          const btn = cells[4]?.querySelector('input')
+          const teamsMatch = btn?.value?.match(/(\d+)\s*Teams?/)
+          tournaments.push({
+            date: cells[0]?.textContent?.trim(),
+            name: cells[1]?.textContent?.trim(),
+            location: cells[2]?.textContent?.trim(),
+            director: cells[3]?.textContent?.trim(),
+            teams: teamsMatch ? parseInt(teamsMatch[1]) : 0,
+          })
+        }
+      })
+      setUpcoming(tournaments)
+    } catch (e) {
+      setUpcomingError('Failed to load: ' + e.message)
+    }
+    setLoadingUpcoming(false)
+  }
+
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px' }}>
       <h1 className="page-title">🥎 Softball Admin</h1>
+
+      {/* Upcoming Tournaments Browser */}
+      <div className="card" style={{ padding: 28, marginTop: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <h3 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 20, fontWeight: 700, margin: 0 }}>
+            📅 Upcoming Tournaments
+          </h3>
+          <button className="btn btn-secondary" onClick={fetchUpcoming} disabled={loadingUpcoming}>
+            {loadingUpcoming ? 'Loading...' : '🔍 Browse'}
+          </button>
+        </div>
+
+        {upcomingError && <div className="alert alert-info">{upcomingError}</div>}
+
+        {upcoming.length > 0 && (
+          <>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 12 }}>
+              Click a tournament to pre-fill the trnid field below once schedules are posted Thursday/Friday.
+            </p>
+            <div style={{ maxHeight: 300, overflowY: 'auto', borderRadius: 8, border: '1px solid var(--border)' }}>
+              <table className="data-table" style={{ fontSize: 12 }}>
+                <thead>
+                  <tr>
+                    <th style={{ width: 90 }}>Date</th>
+                    <th>Tournament</th>
+                    <th style={{ width: 160 }}>Location</th>
+                    <th style={{ width: 60 }}>Teams</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {upcoming.map((t, i) => (
+                    <tr key={i} style={{ cursor: 'pointer' }}
+                      onClick={() => setTrnName(t.name + ' — ' + t.location)}>
+                      <td style={{ color: 'var(--accent)', fontWeight: 600 }}>{t.date}</td>
+                      <td style={{ fontWeight: 500 }}>{t.name}</td>
+                      <td style={{ color: 'var(--text-muted)' }}>{t.location}</td>
+                      <td style={{ textAlign: 'center' }}>
+                        {t.teams > 0
+                          ? <span className="badge badge-green">{t.teams}</span>
+                          : <span style={{ color: 'var(--text-muted)' }}>—</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8 }}>
+              ⚠️ trnid not available until schedules are posted (typically Thu/Fri before the tournament)
+            </p>
+          </>
+        )}
+      </div>
 
       <div className="card" style={{ padding: 28, marginTop: 24 }}>
         <h3 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 20, fontWeight: 700, marginBottom: 16 }}>
