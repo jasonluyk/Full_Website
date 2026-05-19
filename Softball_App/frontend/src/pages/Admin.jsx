@@ -8,6 +8,9 @@ export default function SoftballAdmin() {
   const [division, setDivision] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [upcoming, setUpcoming] = useState([])
+  const [loadingUpcoming, setLoadingUpcoming] = useState(false)
+  const [upcomingError, setUpcomingError] = useState('')
 
   const handle = async (fn) => {
     setLoading(true)
@@ -17,31 +20,10 @@ export default function SoftballAdmin() {
     setLoading(false)
   }
 
-  if (!authed) return (
-    <div style={{ maxWidth: 400, margin: '80px auto', padding: 24 }}>
-      <div className="card" style={{ padding: 32 }}>
-        <h2 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 28, marginBottom: 24 }}>
-          🔒 Admin Login
-        </h2>
-        <input className="input" type="password" placeholder="Password"
-          value={pass} onChange={e => setPass(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && setAuthed(true)}
-          style={{ marginBottom: 12 }} />
-        <button className="btn btn-primary" style={{ width: '100%' }}
-          onClick={() => setAuthed(true)}>Login</button>
-      </div>
-    </div>
-  )
-
-  const [upcoming, setUpcoming] = useState([])
-  const [loadingUpcoming, setLoadingUpcoming] = useState(false)
-  const [upcomingError, setUpcomingError] = useState('')
-
   const fetchUpcoming = async () => {
     setLoadingUpcoming(true)
     setUpcomingError('')
     try {
-      // Fetch from browser (residential IP — not blocked)
       const resp = await fetch('https://playtopgunsports.com/UpcomingTournaments.aspx')
       const html = await resp.text()
       const parser = new DOMParser()
@@ -69,6 +51,22 @@ export default function SoftballAdmin() {
     setLoadingUpcoming(false)
   }
 
+  if (!authed) return (
+    <div style={{ maxWidth: 400, margin: '80px auto', padding: 24 }}>
+      <div className="card" style={{ padding: 32 }}>
+        <h2 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 28, marginBottom: 24 }}>
+          🔒 Admin Login
+        </h2>
+        <input className="input" type="password" placeholder="Password"
+          value={pass} onChange={e => setPass(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && setAuthed(true)}
+          style={{ marginBottom: 12 }} />
+        <button className="btn btn-primary" style={{ width: '100%' }}
+          onClick={() => setAuthed(true)}>Login</button>
+      </div>
+    </div>
+  )
+
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px' }}>
       <h1 className="page-title">🥎 Softball Admin</h1>
@@ -89,7 +87,7 @@ export default function SoftballAdmin() {
         {upcoming.length > 0 && (
           <>
             <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 12 }}>
-              Click a tournament to pre-fill the trnid field below once schedules are posted Thursday/Friday.
+              Click a tournament to pre-fill the name field. Enter the trnid manually once schedules post Thu/Fri.
             </p>
             <div style={{ maxHeight: 300, overflowY: 'auto', borderRadius: 8, border: '1px solid var(--border)' }}>
               <table className="data-table" style={{ fontSize: 12 }}>
@@ -125,7 +123,8 @@ export default function SoftballAdmin() {
         )}
       </div>
 
-      <div className="card" style={{ padding: 28, marginTop: 24 }}>
+      {/* Sync Tournament */}
+      <div className="card" style={{ padding: 28, marginTop: 16 }}>
         <h3 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 20, fontWeight: 700, marginBottom: 16 }}>
           Sync Tournament
         </h3>
@@ -203,12 +202,12 @@ export default function SoftballAdmin() {
           How it works
         </h3>
         <p style={{ color: 'var(--text-muted)', fontSize: 13, lineHeight: 1.8 }}>
-          1. Enter the tournament ID from the Top Gun URL<br/>
-          2. Optionally add a tournament name and filter to a specific division<br/>
-          &nbsp;&nbsp;&nbsp;<em>Leave division blank to sync ALL age groups at once</em><br/>
-          3. Click Sync — data loads in ~20-40 seconds (Playwright scrape)<br/>
-          4. Division tabs appear on the Tracker page automatically<br/>
-          5. Page auto-refreshes every 2 minutes during the tournament
+          1. Browse upcoming tournaments and click one to pre-fill the name<br/>
+          2. Enter the trnid once schedules are posted (Thu/Fri before tournament)<br/>
+          3. Leave division blank to sync ALL age groups at once<br/>
+          4. Click Sync — data loads in ~20-40 seconds<br/>
+          5. Division tabs appear on the Tracker page automatically<br/>
+          6. Page auto-refreshes every 2 minutes during the tournament
         </p>
       </div>
     </div>
