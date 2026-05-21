@@ -24,31 +24,34 @@ export default function SoftballAdmin() {
     setLoadingUpcoming(true)
     setUpcomingError('')
     try {
-      const resp = await fetch('https://playtopgunsports.com/UpcomingTournaments.aspx')
-      const html = await resp.text()
-      const parser = new DOMParser()
-      const doc = parser.parseFromString(html, 'text/html')
-      const rows = doc.querySelectorAll('#ctl00_siteContentPlaceHolder_softballGridView tr:not(:first-child)')
-      const tournaments = []
-      rows.forEach(row => {
-        const cells = row.querySelectorAll('td')
-        if (cells.length >= 4) {
-          const btn = cells[4]?.querySelector('input')
-          const teamsMatch = btn?.value?.match(/(\d+)\s*Teams?/)
-          tournaments.push({
-            date: cells[0]?.textContent?.trim(),
-            name: cells[1]?.textContent?.trim(),
-            location: cells[2]?.textContent?.trim(),
-            director: cells[3]?.textContent?.trim(),
-            teams: teamsMatch ? parseInt(teamsMatch[1]) : 0,
-          })
-        }
-      })
-      setUpcoming(tournaments)
+      const r = await fetch('/softball/api/softball/upcoming-tournaments')
+      const d = await r.json()
+      setUpcoming(d.tournaments || [])
+      if ((d.tournaments || []).length === 0) {
+        setUpcomingError('No tournaments found. Click Discover to scrape from Top Gun.')
+      }
     } catch (e) {
       setUpcomingError('Failed to load: ' + e.message)
     }
     setLoadingUpcoming(false)
+  }
+
+  const discoverTournaments = async () => {
+    setLoadingUpcoming(true)
+    setUpcomingError('')
+    try {
+      const r = await fetch('/softball/api/admin/softball/discover-tournaments', {
+        method: 'POST',
+        headers: { 'Authorization': 'Basic ' + btoa('admin:' + pass) }
+      })
+      const d = await r.json()
+      setUpcomingError(d.message)
+      // Poll for results after 35 seconds
+      setTimeout(fetchUpcoming, 35000)
+    } catch (e) {
+      setUpcomingError('Failed: ' + e.message)
+      setLoadingUpcoming(false)
+    }
   }
 
   if (!authed) return (
@@ -77,9 +80,14 @@ export default function SoftballAdmin() {
           <h3 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 20, fontWeight: 700, margin: 0 }}>
             📅 Upcoming Tournaments
           </h3>
-          <button className="btn btn-secondary" onClick={fetchUpcoming} disabled={loadingUpcoming}>
-            {loadingUpcoming ? 'Loading...' : '🔍 Browse'}
-          </button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-secondary" onClick={fetchUpcoming} disabled={loadingUpcoming}>
+              {loadingUpcoming ? 'Loading...' : '🔄 Refresh'}
+            </button>
+            <button className="btn btn-primary" onClick={discoverTournaments} disabled={loadingUpcoming}>
+              🔍 Discover
+            </button>
+          </div>
         </div>
 
         {upcomingError && <div className="alert alert-info">{upcomingError}</div>}
@@ -101,15 +109,22 @@ export default function SoftballAdmin() {
                 </thead>
                 <tbody>
                   {upcoming.map((t, i) => (
-                    <tr key={i} style={{ cursor: 'pointer' }}
-                      onClick={() => setTrnName(t.name + ' — ' + t.location)}>
+                    <tr key={i} style={{ cursor: 'pointer', background: 'rgba(99,102,241,0.05)' }}
+                      onClick={() => { setTrnid(t.trnid); setTrnName(t.name + ' — ' + t.location) }}>
                       <td style={{ color: 'var(--accent)', fontWeight: 600 }}>{t.date}</td>
-                      <td style={{ fontWeight: 500 }}>{t.name}</td>
+                      <td style={{ fontWeight: 500 }}>
+                        {t.name}
+                        <span className="badge badge-gold" style={{ marginLeft: 8, fontSize: 10 }}>
+                          trnid: {t.trnid}
+                        </span>
+                      </td>
                       <td style={{ color: 'var(--text-muted)' }}>{t.location}</td>
                       <td style={{ textAlign: 'center' }}>
-                        {t.teams > 0
-                          ? <span className="badge badge-green">{t.teams}</span>
-                          : <span style={{ color: 'var(--text-muted)' }}>—</span>}
+                        <button className="btn btn-primary"
+                          style={{ fontSize: 11, padding: '4px 10px' }}
+                          onClick={e => { e.stopPropagation(); setTrnid(t.trnid); setTrnName(t.name + ' — ' + t.location) }}>
+                          Load →
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -117,7 +132,7 @@ export default function SoftballAdmin() {
               </table>
             </div>
             <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8 }}>
-              ⚠️ trnid not available until schedules are posted (typically Thu/Fri before the tournament)
+              💡 Click any row or "Load →" to fill the trnid and name fields below
             </p>
           </>
         )}

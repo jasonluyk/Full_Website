@@ -192,6 +192,39 @@ def admin_sync(
     return {"message": f"Sync started for trnid={trnid} ({'all divisions' if not division else division})"}
 
 
+@app.post("/api/admin/softball/discover-tournaments")
+def discover_tournaments(username: str = Depends(verify_admin)):
+    """Scrape upcoming tournaments and save trnids to MongoDB."""
+    def do_discover():
+        try:
+            from scraper import scrape_upcoming_tournaments
+            tournaments = scrape_upcoming_tournaments()
+            if tournaments:
+                # Store each tournament, upsert by trnid
+                for t in tournaments:
+                    db["upcoming_tournaments"].replace_one(
+                        {"trnid": t["trnid"]},
+                        t,
+                        upsert=True
+                    )
+                print(f"✅ Saved {len(tournaments)} upcoming tournaments")
+        except Exception as e:
+            import traceback
+            print(f"⚠️ Discover error: {e}")
+            traceback.print_exc()
+
+    threading.Thread(target=do_discover, daemon=True).start()
+    return {"message": "Discovery started — check back in ~30 seconds"}
+
+
+@app.get("/api/softball/upcoming-tournaments")
+def get_upcoming_tournaments():
+    """Returns saved upcoming tournaments with trnids."""
+    tournaments = list(db["upcoming_tournaments"].find({}, {"_id": 0})
+                       .sort("date", 1))
+    return {"tournaments": tournaments}
+
+
 @app.delete("/api/admin/softball/clear")
 def admin_clear(username: str = Depends(verify_admin)):
     """Clear all tournament data."""

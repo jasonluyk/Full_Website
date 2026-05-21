@@ -194,3 +194,121 @@ def parse_division(header_td, name):
           f"{len(division['pool_play'])} pool games, "
           f"{len(division['brackets'])} brackets")
     return division
+
+
+def scrape_upcoming_tournaments():
+    """
+    Scrapes the Top Gun upcoming tournaments page, finds all tournaments
+    with schedules posted, clicks each Schedule button to intercept the
+    trnid from the redirect URL.
+    Must run from a residential IP (local machine, not droplet).
+    """
+    print("🔍 Scraping upcoming tournaments...")
+    results = []
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True, args=[
+            "--no-sandbox", "--disable-blink-features=AutomationControlled"
+        ])
+        context = browser.new_context(
+            user_agent=USER_AGENT,
+            viewport={"width": 1920, "height": 1080}
+        )
+
+        # ── Step 1: Load upcoming tournaments page ────────────────────
+        page = context.new_page()
+        page.goto("https://playtopgunsports.com/UpcomingTournaments.aspx", timeout=60000)
+        page.wait_for_timeout(4000)
+
+        html = page.content()
+        if len(html) < 500:
+            print("❌ Blocked — must run from local machine")
+            browser.close()
+            return []
+
+        soup = BeautifulSoup(html, 'html.parser')
+        rows = soup.select('#ctl00_siteContentPlaceHolder_softballGridView tr:not(:first-child)')
+        print(f"  Found {len(rows)} tournament rows")
+
+        # ── Step 2: Find rows with Schedule buttons ───────────────────
+        schedule_rows = []
+        for row in rows:
+            cells = row.find_all('td')
+            if len(cells) < 5:
+                continue
+            btn = cells[4].find('input', attrs={'type': 'button'})
+            if not btn:
+                continue
+            btn_value = btn.get('value', '')
+            if 'schedule' not in btn_value.lower():
+                continue
+            onclick = btn.get('onclick', '')
+            arg_match = re.search(r"'myGameTimeScores\$(\d+)'", onclick)
+            if not arg_match:
+                continue
+            schedule_rows.append({
+                'date': cells[0].get_text(strip=True),
+                'name': cells[1].get_text(strip=True),
+                'location': cells[2].get_text(strip=True),
+                'director': cells[3].get_text(strip=True),
+                'row_index': int(arg_match.group(1)),
+                'onclick': onclick,
+            })
+
+        print(f"  Found {len(schedule_rows)} tournaments with schedules posted")
+
+        # ── Step 3: Click each Schedule button, capture trnid ─────────
+        for t in schedule_rows:
+            try:
+                print(f"  Checking: {t['name'][:50]}...")
+
+                # Navigate fresh to the page each time
+                page2 = context.new_page()
+
+                # Listen for navigation to GameTimesResults
+                trnid_found = None
+
+                def handle_response(response):
+                    nonlocal trnid_found
+                    url = response.url
+                    if 'GameTimesResults.aspx' in url and 'trnid=' in url:
+                        match = re.search(r'trnid=(\d+)', url)
+                        if match:
+                            trnid_found = match.group(1)
+
+                page2.on('response', handle_response)
+                page2.goto("https://playtopgunsports.com/UpcomingTournaments.aspx", timeout=30000)
+                page2.wait_for_timeout(3000)
+
+                # Trigger the postback by evaluating the onclick
+                page2.evaluate(f"javascript:__doPostBack('ctl00$siteContentPlaceHolder$softballGridView','myGameTimeScores${t['row_index']}')")
+                page2.wait_for_timeout(4000)
+
+                # Also check current URL
+                current_url = page2.url
+                if 'trnid=' in current_url:
+                    match = re.search(r'trnid=(\d+)', current_url)
+                    if match:
+                        trnid_found = match.group(1)
+
+                page2.close()
+
+                if trnid_found:
+                    print(f"    ✅ trnid={trnid_found}")
+                    results.append({
+                        'trnid': trnid_found,
+                        'name': t['name'],
+                        'date': t['date'],
+                        'location': t['location'],
+                        'director': t['director'],
+                    })
+                else:
+                    print(f"    ⚠️ Could not extract trnid")
+
+            except Exception as e:
+                print(f"    ⚠️ Error: {e}")
+
+        browser.close()
+
+    print(f"✅ Found {len(results)} tournaments with trnids")
+    return results
