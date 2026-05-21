@@ -58,10 +58,6 @@ function seedTeams(standings, allGames) {
 
 export default function Predictor() {
   const [data, setData] = useState(null)
-  const [allDivisions, setAllDivisions] = useState([])
-  const [activeDivision, setActiveDivision] = useState(
-    () => localStorage.getItem('active_division') || ''
-  )
   const [loading, setLoading] = useState(true)
   const [scores, setScores] = useState(() => {
     try { return JSON.parse(localStorage.getItem('pred_scores') || '{}') }
@@ -75,31 +71,9 @@ export default function Predictor() {
   useEffect(() => {
     fetch('/softball/api/softball/tournament')
       .then(r => r.json())
-      .then(res => {
-        const divisions = res.divisions || []
-        setAllDivisions(divisions)
-        const saved = localStorage.getItem('active_division')
-        const match = divisions.find(d => d.name === saved)
-        const active = match || divisions[0]
-        if (active) {
-          setActiveDivision(active.name)
-          setData(active)
-        }
-        setLoading(false)
-      })
+      .then(res => { setData(res.data); setLoading(false) })
       .catch(() => setLoading(false))
   }, [])
-
-  const switchDivision = (name) => {
-    const div = allDivisions.find(d => d.name === name)
-    if (div) {
-      setActiveDivision(name)
-      setData(div)
-      localStorage.setItem('active_division', name)
-      setScores({})
-      localStorage.removeItem('pred_scores')
-    }
-  }
 
   useEffect(() => {
     localStorage.setItem('pred_highlight', highlightTeam)
