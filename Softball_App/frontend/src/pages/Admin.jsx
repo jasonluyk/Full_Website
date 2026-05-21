@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function SoftballAdmin() {
   const [pass, setPass] = useState('')
@@ -8,6 +8,7 @@ export default function SoftballAdmin() {
   const [division, setDivision] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [activeTournaments, setActiveTournaments] = useState([])
   const [upcoming, setUpcoming] = useState([])
   const [loadingUpcoming, setLoadingUpcoming] = useState(false)
   const [upcomingError, setUpcomingError] = useState('')
@@ -53,6 +54,18 @@ export default function SoftballAdmin() {
       setLoadingUpcoming(false)
     }
   }
+
+  // Auto-load saved tournaments when admin opens
+  useEffect(() => {
+    fetch('/softball/api/softball/upcoming-tournaments')
+      .then(r => r.json())
+      .then(d => setUpcoming(d.tournaments || []))
+      .catch(() => {})
+    fetch('/softball/api/softball/tournaments')
+      .then(r => r.json())
+      .then(d => setActiveTournaments(d.tournaments || []))
+      .catch(() => {})
+  }, [])
 
   if (!authed) return (
     <div style={{ maxWidth: 400, margin: '80px auto', padding: 24 }}>
@@ -189,6 +202,11 @@ export default function SoftballAdmin() {
               })
               const d = await r.json()
               setMessage(d.message || 'Done')
+              // Refresh active tournaments list
+              fetch('/softball/api/softball/tournaments')
+                .then(r => r.json())
+                .then(d => setActiveTournaments(d.tournaments || []))
+                .catch(() => {})
             })}>
             {loading ? 'Syncing...' : '🔄 Sync Now'}
           </button>
@@ -211,6 +229,38 @@ export default function SoftballAdmin() {
           <div className="alert alert-info" style={{ marginTop: 16 }}>{message}</div>
         )}
       </div>
+
+      {/* Active Tournaments */}
+      {activeTournaments.length > 0 && (
+        <div className="card" style={{ padding: 28, marginTop: 16 }}>
+          <h3 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 20, fontWeight: 700, marginBottom: 16 }}>
+            🏟️ Active Tournaments ({activeTournaments.length})
+          </h3>
+          {activeTournaments.map(t => (
+            <div key={t.trnid} style={{ display: 'flex', justifyContent: 'space-between',
+              alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--border)' }}>
+              <div>
+                <div style={{ fontWeight: 600 }}>{t.name || `trnid: ${t.trnid}`}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                  trnid: {t.trnid} {t.division ? `· Division: ${t.division}` : '· All divisions'}
+                </div>
+              </div>
+              <button className="btn btn-danger" style={{ fontSize: 12, padding: '4px 10px' }}
+                onClick={() => handle(async () => {
+                  const r = await fetch(`/softball/api/admin/softball/tournament/${t.trnid}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Basic ' + btoa('admin:' + pass) }
+                  })
+                  const d = await r.json()
+                  setMessage(d.message)
+                  setActiveTournaments(prev => prev.filter(x => x.trnid !== t.trnid))
+                })}>
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="card" style={{ padding: 28, marginTop: 16 }}>
         <h3 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: 20, fontWeight: 700, marginBottom: 8 }}>

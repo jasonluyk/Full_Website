@@ -272,12 +272,33 @@ export default function Tournament() {
   const [status, setStatus] = useState('none')
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState(null)
+  const [allTournaments, setAllTournaments] = useState([])
+  const [activeTrnid, setActiveTrnid] = useState(
+    () => localStorage.getItem('active_trnid') || ''
+  )
   const [activeDivision, setActiveDivision] = useState(
     () => localStorage.getItem('active_division') || ''
   )
 
-  const fetchData = () => {
-    fetch('/softball/api/softball/tournament')
+  const fetchTournaments = () => {
+    fetch('/softball/api/softball/tournaments')
+      .then(r => r.json())
+      .then(res => {
+        const list = res.tournaments || []
+        setAllTournaments(list)
+        // Auto-select first tournament if none selected
+        if (list.length > 0 && !activeTrnid) {
+          setActiveTrnid(list[0].trnid)
+        }
+      })
+      .catch(() => {})
+  }
+
+  const fetchData = (trnid) => {
+    const url = trnid
+      ? `/softball/api/softball/tournament?trnid=${trnid}`
+      : '/softball/api/softball/tournament'
+    fetch(url)
       .then(r => r.json())
       .then(res => {
         setDivisions(res.divisions || [])
@@ -285,7 +306,6 @@ export default function Tournament() {
         setStatus(res.status)
         setLastUpdated(new Date())
         setLoading(false)
-        // Auto-select first division if none selected or saved one gone
         if (res.divisions?.length > 0) {
           const names = res.divisions.map(d => d.name)
           if (!activeDivision || !names.includes(activeDivision)) {
@@ -296,8 +316,25 @@ export default function Tournament() {
       .catch(() => setLoading(false))
   }
 
-  useEffect(() => { fetchData(); const i = setInterval(fetchData, 120000); return () => clearInterval(i) }, [])
+  useEffect(() => {
+    fetchTournaments()
+    fetchData(activeTrnid)
+    const i = setInterval(() => {
+      fetchTournaments()
+      fetchData(activeTrnid)
+    }, 120000)
+    return () => clearInterval(i)
+  }, [])
+
+  useEffect(() => {
+    if (activeTrnid) {
+      setLoading(true)
+      setDivisions([])
+      fetchData(activeTrnid)
+    }
+  }, [activeTrnid])
   useEffect(() => { localStorage.setItem('active_division', activeDivision) }, [activeDivision])
+  useEffect(() => { if (activeTrnid) localStorage.setItem('active_trnid', activeTrnid) }, [activeTrnid])
 
   if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: 80 }}><div className="spinner" /></div>
 
@@ -334,6 +371,27 @@ export default function Tournament() {
         <button className="btn btn-secondary" onClick={fetchData}
           style={{ fontSize: isMobile ? 18 : 14, padding: isMobile ? '8px 12px' : undefined }}>↻</button>
       </div>
+
+      {/* Tournament selector */}
+      {allTournaments.length > 1 && (
+        <div style={{ display: 'flex', gap: 6, overflowX: 'auto', marginBottom: 14, scrollbarWidth: 'none' }}>
+          {allTournaments.map(t => (
+            <button key={t.trnid}
+              onClick={() => setActiveTrnid(t.trnid)}
+              style={{
+                padding: isMobile ? '5px 10px' : '6px 14px',
+                borderRadius: 8, cursor: 'pointer', whiteSpace: 'nowrap',
+                fontFamily: 'Barlow Condensed, sans-serif',
+                fontSize: isMobile ? 12 : 13, fontWeight: 700,
+                background: t.trnid === activeTrnid ? 'var(--text-primary)' : 'var(--bg-card)',
+                color: t.trnid === activeTrnid ? 'var(--bg-primary)' : 'var(--text-muted)',
+                border: `1px solid ${t.trnid === activeTrnid ? 'var(--text-primary)' : 'var(--border)'}`,
+              }}>
+              🏟️ {t.name || `Tournament ${t.trnid}`}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Division tabs */}
       <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 4, marginBottom: 20,

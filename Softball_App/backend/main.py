@@ -31,6 +31,7 @@ db = client["softball_db"]
 
 # Ensure unique index on trnid + division name
 db["tournament_data"].create_index([("trnid", 1), ("name", 1)], unique=True)
+db["active_tournaments"].create_index([("trnid", 1)], unique=True)
 
 ADMIN_PASS = os.environ.get("ADMIN_PASS", "admin")
 
@@ -48,54 +49,66 @@ def verify_admin(credentials: HTTPBasicCredentials = Depends(security)):
 _sync_thread = None
 
 def background_sync_loop():
-    """Auto-resync every 2 minutes if a tournament is active."""
+    """Auto-resync all active tournaments every 2 minutes."""
     while True:
         time.sleep(120)
         try:
-            active = db["active_tournament"].find_one({"type": "current"})
-            if not active or not active.get("trnid"):
+            active_list = list(db["active_tournaments"].find({}))
+            if not active_list:
                 continue
             if not scrape_tournament:
                 print("⚠️ Scraper not available")
                 continue
-            div_filter = active.get("division")
-            print(f"🔄 Background sync: trnid={active['trnid']} {'(' + div_filter + ')' if div_filter else '(all divisions)'}...")
-            divisions = scrape_tournament(active["trnid"], div_filter)
-            if divisions:
-                for div in divisions:
-                    db["tournament_data"].replace_one(
-                        {"trnid": active["trnid"], "name": div["name"]},
-                        {"trnid": active["trnid"], **div},
-                        upsert=True
-                    )
-                print(f"✅ Auto-synced {len(divisions)} division(s)")
-            else:
-                print(f"⚠️ Auto-sync returned no data for trnid={active['trnid']}")
+            for active in active_list:
+                trnid = active.get("trnid")
+                if not trnid:
+                    continue
+                div_filter = active.get("division")
+                print(f"🔄 Background sync: trnid={trnid} {'(' + div_filter + ')' if div_filter else '(all)'}...")
+                try:
+                    divisions = scrape_tournament(trnid, div_filter)
+                    if divisions:
+                        for div in divisions:
+                            db["tournament_data"].replace_one(
+                                {"trnid": trnid, "name": div["name"]},
+                                {"trnid": trnid, **div},
+                                upsert=True
+                            )
+                        print(f"  ✅ Synced {len(divisions)} division(s) for trnid={trnid}")
+                    else:
+                        print(f"  ⚠️ No data for trnid={trnid}")
+                except Exception as e:
+                    print(f"  ⚠️ Error syncing trnid={trnid}: {e}")
         except Exception as e:
             import traceback
-            print(f"⚠️ Auto-sync error: {e}")
+            print(f"⚠️ Sync loop error: {e}")
             traceback.print_exc()
 
 def startup_sync():
-    """On startup, immediately sync if there's an active tournament."""
-    time.sleep(5)  # Wait for DB connection to settle
-    active = db["active_tournament"].find_one({"type": "current"})
-    if active and active.get("trnid") and active.get("division"):
-        print(f"🔄 Auto-syncing on startup: {active['division']}...")
+    """On startup, immediately sync all active tournaments."""
+    time.sleep(5)
+    active_list = list(db["active_tournaments"].find({}))
+    if not active_list:
+        return
+    print(f"🔄 Startup sync for {len(active_list)} tournament(s)...")
+    for active in active_list:
+        trnid = active.get("trnid")
+        if not trnid:
+            continue
         try:
             if not scrape_tournament:
-                print("⚠️ Scraper not available for startup sync")
+                print("⚠️ Scraper not available")
                 return
-            divisions = scrape_tournament(active["trnid"], active["division"])
+            divisions = scrape_tournament(trnid, active.get("division"))
             for div in divisions:
                 db["tournament_data"].replace_one(
-                    {"trnid": active["trnid"], "name": div["name"]},
-                    {"trnid": active["trnid"], **div},
+                    {"trnid": trnid, "name": div["name"]},
+                    {"trnid": trnid, **div},
                     upsert=True
                 )
-            print(f"✅ Startup sync complete")
+            print(f"  ✅ Synced trnid={trnid}")
         except Exception as e:
-            print(f"⚠️ Startup sync error: {e}")
+            print(f"  ⚠️ Startup sync error for trnid={trnid}: {e}")
 
 
 @asynccontextmanager
@@ -117,35 +130,33 @@ app.add_middleware(CORSMiddleware,
 
 # ── Endpoints ─────────────────────────────────────────────────────────
 
+@app.get("/api/softball/tournaments")
+def get_active_tournaments():
+    """Returns list of all active tournaments."""
+    active = list(db["active_tournaments"].find({}, {"_id": 0}))
+    return {"tournaments": active}
+
+
 @app.get("/api/softball/tournament")
-def get_tournament():
-    """Returns all divisions for the current tournament."""
-    active = db["active_tournament"].find_one({"type": "current"}, {"_id": 0})
+def get_tournament(trnid: str = None):
+    """Returns all divisions for a tournament. Uses first active if no trnid given."""
+    if not trnid:
+        first = db["active_tournaments"].find_one({}, {"_id": 0})
+        if not first:
+            return {"divisions": [], "status": "none", "trnid": None, "name": None}
+        trnid = first.get("trnid")
+
+    active = db["active_tournaments"].find_one({"trnid": trnid}, {"_id": 0})
     if not active:
-        return {"divisions": [], "status": "none", "trnid": None, "name": None}
+        return {"divisions": [], "status": "none", "trnid": trnid, "name": None}
 
-    trnid = active.get("trnid")
     docs = list(db["tournament_data"].find({"trnid": trnid}, {"_id": 0}))
-
     return {
         "divisions": docs,
         "trnid": trnid,
         "name": active.get("name", ""),
         "status": "active" if docs else "syncing"
     }
-
-
-@app.get("/api/softball/tournament/{division_name}")
-def get_tournament_division(division_name: str):
-    """Returns a specific division for the current tournament."""
-    active = db["active_tournament"].find_one({"type": "current"}, {"_id": 0})
-    if not active:
-        return {"data": None, "status": "none"}
-    trnid = active.get("trnid")
-    doc = db["tournament_data"].find_one(
-        {"trnid": trnid, "name": division_name}, {"_id": 0}
-    )
-    return {"data": doc, "trnid": trnid, "status": "active" if doc else "not_found"}
 
 
 @app.post("/api/admin/softball/sync")
@@ -162,10 +173,10 @@ def admin_sync(
     if not trnid:
         raise HTTPException(status_code=400, detail="trnid required")
 
-    # Save as active tournament
-    db["active_tournament"].replace_one(
-        {"type": "current"},
-        {"type": "current", "trnid": trnid, "division": division, "name": name},
+    # Save as active tournament (supports multiple)
+    db["active_tournaments"].replace_one(
+        {"trnid": trnid},
+        {"trnid": trnid, "division": division, "name": name},
         upsert=True
     )
 
@@ -225,10 +236,18 @@ def get_upcoming_tournaments():
     return {"tournaments": tournaments}
 
 
+@app.delete("/api/admin/softball/tournament/{trnid}")
+def remove_tournament(trnid: str, username: str = Depends(verify_admin)):
+    """Remove a specific tournament from active list."""
+    db["active_tournaments"].delete_one({"trnid": trnid})
+    db["tournament_data"].delete_many({"trnid": trnid})
+    return {"message": f"Removed trnid={trnid}"}
+
+
 @app.delete("/api/admin/softball/clear")
 def admin_clear(username: str = Depends(verify_admin)):
     """Clear all tournament data."""
-    db["active_tournament"].delete_many({})
+    db["active_tournaments"].delete_many({})
     db["tournament_data"].delete_many({})
     return {"message": "Cleared"}
 
