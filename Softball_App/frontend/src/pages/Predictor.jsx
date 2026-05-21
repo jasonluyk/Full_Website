@@ -57,7 +57,17 @@ function seedTeams(standings, allGames) {
 }
 
 export default function Predictor() {
+  const isMobile = window.innerWidth < 768
   const [data, setData] = useState(null)
+  const [allDivisions, setAllDivisions] = useState([])
+  const [activeDivision, setActiveDivision] = useState(
+    () => localStorage.getItem('active_division') || ''
+  )
+  const [allTournaments, setAllTournaments] = useState([])
+  const [activeTrnid, setActiveTrnid] = useState(
+    () => localStorage.getItem('active_trnid') || ''
+  )
+  const [activeTournamentName, setActiveTournamentName] = useState('')
   const [loading, setLoading] = useState(true)
   const [scores, setScores] = useState(() => {
     try { return JSON.parse(localStorage.getItem('pred_scores') || '{}') }
@@ -67,12 +77,58 @@ export default function Predictor() {
     () => localStorage.getItem('pred_highlight') || ''
   )
   const [saved, setSaved] = useState(false)
+  const [showStandings, setShowStandings] = useState(false)
+
+  const loadTournament = (trnid) => {
+    const url = trnid
+      ? `/softball/api/softball/tournament?trnid=${trnid}`
+      : '/softball/api/softball/tournament'
+    fetch(url)
+      .then(r => r.json())
+      .then(res => {
+        const divisions = res.divisions || []
+        setAllDivisions(divisions)
+        setActiveTournamentName(res.name || '')
+        const saved = localStorage.getItem('active_division')
+        const match = divisions.find(d => d.name === saved)
+        const active = match || divisions[0]
+        if (active) {
+          setActiveDivision(active.name)
+          setData(active)
+        }
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }
+
+  const switchDivision = (name) => {
+    const div = allDivisions.find(d => d.name === name)
+    if (div) {
+      setActiveDivision(name)
+      setData(div)
+      localStorage.setItem('active_division', name)
+      setScores({})
+      localStorage.removeItem('pred_scores')
+    }
+  }
+
+  const switchTournament = (trnid) => {
+    localStorage.setItem('active_trnid', trnid)
+    setActiveTrnid(trnid)
+    setLoading(true)
+    setData(null)
+    setAllDivisions([])
+    setScores({})
+    localStorage.removeItem('pred_scores')
+    loadTournament(trnid)
+  }
 
   useEffect(() => {
-    fetch('/softball/api/softball/tournament')
+    fetch('/softball/api/softball/tournaments')
       .then(r => r.json())
-      .then(res => { setData(res.data); setLoading(false) })
-      .catch(() => setLoading(false))
+      .then(res => setAllTournaments(res.tournaments || []))
+      .catch(() => {})
+    loadTournament(activeTrnid)
   }, [])
 
   useEffect(() => {
@@ -100,7 +156,7 @@ export default function Predictor() {
   if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: 80 }}><div className="spinner" /></div>
 
   if (!data) return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px' }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px' }}>
       <h1 className="page-title">🔮 Score Predictor</h1>
       <div className="alert alert-info" style={{ marginTop: 20 }}>No tournament loaded yet.</div>
     </div>
@@ -159,6 +215,36 @@ export default function Predictor() {
           )}
         </div>
       </div>
+
+      {/* Tournament selector */}
+      {allTournaments.length > 1 && (
+        <div style={{ display: 'flex', gap: 6, overflowX: 'auto', marginBottom: 14, scrollbarWidth: 'none' }}>
+          {allTournaments.map(t => (
+            <button key={t.trnid} onClick={() => switchTournament(t.trnid)} style={{
+              padding: '5px 12px', borderRadius: 8, cursor: 'pointer', whiteSpace: 'nowrap',
+              fontFamily: 'Barlow Condensed, sans-serif', fontSize: 13, fontWeight: 700,
+              background: t.trnid === activeTrnid ? 'var(--text-primary)' : 'var(--bg-card)',
+              color: t.trnid === activeTrnid ? 'var(--bg-primary)' : 'var(--text-muted)',
+              border: `1px solid ${t.trnid === activeTrnid ? 'var(--text-primary)' : 'var(--border)'}`,
+            }}>🏟️ {t.name || `Tournament ${t.trnid}`}</button>
+          ))}
+        </div>
+      )}
+
+      {/* Division tabs */}
+      {allDivisions.length > 1 && (
+        <div style={{ display: 'flex', gap: 6, overflowX: 'auto', marginBottom: 14, scrollbarWidth: 'none' }}>
+          {allDivisions.map(d => (
+            <button key={d.name} onClick={() => switchDivision(d.name)} style={{
+              padding: '5px 12px', borderRadius: 8, cursor: 'pointer', whiteSpace: 'nowrap',
+              fontFamily: 'Barlow Condensed, sans-serif', fontSize: 13, fontWeight: 700,
+              background: d.name === activeDivision ? 'var(--accent)' : 'var(--bg-card)',
+              color: d.name === activeDivision ? '#000' : 'var(--text-secondary)',
+              border: `1px solid ${d.name === activeDivision ? 'var(--accent)' : 'var(--border)'}`,
+            }}>{d.name}</button>
+          ))}
+        </div>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24, alignItems: 'start' }}>
 
