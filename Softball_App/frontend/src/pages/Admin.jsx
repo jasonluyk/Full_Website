@@ -100,6 +100,20 @@ export default function SoftballAdmin() {
             <button className="btn btn-primary" onClick={discoverTournaments} disabled={loadingUpcoming}>
               🔍 Discover
             </button>
+            {upcoming.length > 0 && (
+              <button className="btn btn-danger"
+                onClick={() => handle(async () => {
+                  const r = await fetch('/softball/api/admin/softball/upcoming', {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Basic ' + btoa('admin:' + pass) }
+                  })
+                  const d = await r.json()
+                  setUpcoming([])
+                  setUpcomingError(d.message)
+                })}>
+                🗑️ Clear
+              </button>
+            )}
           </div>
         </div>
 

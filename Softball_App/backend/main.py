@@ -244,6 +244,13 @@ def remove_tournament(trnid: str, username: str = Depends(verify_admin)):
     return {"message": f"Removed trnid={trnid}"}
 
 
+@app.delete("/api/admin/softball/upcoming")
+def clear_upcoming(username: str = Depends(verify_admin)):
+    """Clear saved upcoming tournaments list."""
+    db["upcoming_tournaments"].delete_many({})
+    return {"message": "Upcoming tournaments cleared"}
+
+
 @app.delete("/api/admin/softball/clear")
 def admin_clear(username: str = Depends(verify_admin)):
     """Clear all tournament data."""
