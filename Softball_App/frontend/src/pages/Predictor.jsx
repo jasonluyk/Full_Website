@@ -126,9 +126,21 @@ export default function Predictor() {
   useEffect(() => {
     fetch('/softball/api/softball/tournaments')
       .then(r => r.json())
-      .then(res => setAllTournaments(res.tournaments || []))
-      .catch(() => {})
-    loadTournament(activeTrnid)
+      .then(res => {
+        const list = res.tournaments || []
+        setAllTournaments(list)
+        // Clear stale trnid if it no longer exists
+        const saved = localStorage.getItem('active_trnid')
+        const exists = list.find(t => t.trnid === saved)
+        if (!exists && list.length > 0) {
+          localStorage.setItem('active_trnid', list[0].trnid)
+          setActiveTrnid(list[0].trnid)
+          loadTournament(list[0].trnid)
+        } else {
+          loadTournament(saved || (list[0]?.trnid || ''))
+        }
+      })
+      .catch(() => loadTournament(activeTrnid))
   }, [])
 
   useEffect(() => {

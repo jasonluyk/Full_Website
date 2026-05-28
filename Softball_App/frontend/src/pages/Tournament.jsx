@@ -286,8 +286,13 @@ export default function Tournament() {
       .then(res => {
         const list = res.tournaments || []
         setAllTournaments(list)
-        // Auto-select first tournament if none selected
-        if (list.length > 0 && !activeTrnid) {
+        // If saved trnid no longer exists, clear it and use first
+        const savedTrnid = localStorage.getItem('active_trnid')
+        const exists = list.find(t => t.trnid === savedTrnid)
+        if (!exists && list.length > 0) {
+          localStorage.setItem('active_trnid', list[0].trnid)
+          setActiveTrnid(list[0].trnid)
+        } else if (!savedTrnid && list.length > 0) {
           setActiveTrnid(list[0].trnid)
         }
       })
