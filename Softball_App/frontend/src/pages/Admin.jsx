@@ -46,9 +46,9 @@ export default function SoftballAdmin() {
         headers: { 'Authorization': 'Basic ' + btoa('admin:' + pass) }
       })
       const d = await r.json()
-      setUpcomingError(d.message)
-      // Poll for results after 35 seconds
-      setTimeout(fetchUpcoming, 35000)
+      setUpcomingError(d.message + ' — results will appear in ~60-90 seconds')
+      // Poll for results after 90 seconds (Playwright takes time)
+      setTimeout(fetchUpcoming, 90000)
     } catch (e) {
       setUpcomingError('Failed: ' + e.message)
       setLoadingUpcoming(false)
@@ -109,7 +109,7 @@ export default function SoftballAdmin() {
                   })
                   const d = await r.json()
                   setUpcoming([])
-                  setUpcomingError(d.message)
+                  setUpcomingError(d.message + ' — results will appear in ~60-90 seconds')
                 })}>
                 🗑️ Clear
               </button>
